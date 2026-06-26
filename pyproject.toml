@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jwst-psfmc"
+version = "0.1.0"
+description = "PSF photometry with MCMC for JWST (and HST) drizzled difference images, with correlated-noise likelihood"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Mingyang Zhuang" },
+]
+keywords = [
+    "astronomy",
+    "JWST",
+    "PSF",
+    "photometry",
+    "MCMC",
+    "drizzle",
+    "transients",
+    "supernovae",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.9",
+    "astropy>=5.2",
+    "photutils>=1.7",
+    "emcee>=3.1",
+    "corner>=2.2",
+    "matplotlib>=3.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "pytest-cov",
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "nbsphinx",
+]
+
+[project.urls]
+Homepage = "https://github.com/mingyangzhuang/jwst_psfmc"
+"Bug Tracker" = "https://github.com/mingyangzhuang/jwst_psfmc/issues"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["jwst_psfmc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
