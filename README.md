@@ -3,8 +3,8 @@
 **PSF photometry with MCMC for JWST (and HST) drizzled difference images.**
 
 [![CI](https://github.com/mingyangzhuang/jwst_psfmc/actions/workflows/ci.yml/badge.svg)](https://github.com/mingyangzhuang/jwst_psfmc/actions)
-[![PyPI](https://img.shields.io/pypi/v/jwst-psfmc)](https://pypi.org/project/jwst-psfmc/)
-[![Python](https://img.shields.io/pypi/pyversions/jwst-psfmc)](https://pypi.org/project/jwst-psfmc/)
+[![PyPI](https://img.shields.io/pypi/v/jwst-psfmc?cacheSeconds=3600)](https://pypi.org/project/jwst-psfmc/)
+[![Python](https://img.shields.io/pypi/pyversions/jwst-psfmc?cacheSeconds=3600)](https://pypi.org/project/jwst-psfmc/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
