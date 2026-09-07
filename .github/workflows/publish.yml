@@ -1,5 +1,7 @@
 name: Publish
 
+# Manual runs target TestPyPI; pushing a v* tag publishes to PyPI.
+
 # Publishing uses PyPI Trusted Publishing (OpenID Connect) — no API tokens
 # are stored in this repository. See RELEASING.md for the one-time setup.
 #
