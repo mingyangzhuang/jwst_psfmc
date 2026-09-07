@@ -1,6 +1,6 @@
 # jwst_psfmc
 
-**PSF photometry with MCMC for JWST (and HST) drizzled difference images.**
+**PSF photometry with MCMC for JWST (and HST) drizzled images.**
 
 [![CI](https://github.com/mingyangzhuang/jwst_psfmc/actions/workflows/ci.yml/badge.svg)](https://github.com/mingyangzhuang/jwst_psfmc/actions)
 [![PyPI](https://img.shields.io/pypi/v/jwst-psfmc?cacheSeconds=3600)](https://pypi.org/project/jwst-psfmc/)
@@ -17,12 +17,12 @@ pixel are spread across several output pixels during co-addition.  If these corr
 ignored in a standard χ² PSF fit, the flux uncertainties are systematically *underestimated*.
   Even in full MCMC fitting with correlated-noise likelihoods, neglecting the covariance kernel
   underestimates flux uncertainties by ~30% in F200W (Zhuang et al., *NEXUS: Transient Searches
-  and First Results from Year One Observations*, in prep.).
+  and First Results from Year One Observations*, submitted).
 
 `jwst_psfmc` solves this by:
 
 1. **Measuring the covariance structure** directly from source-free sky regions of the
-   difference image using an autocorrelation estimator.
+   drizzled image using an autocorrelation estimator.
 2. **Encoding the covariance as a Fourier-space power spectrum**, enabling an exact
    correlated-noise log-likelihood that is *O(N log N)* per MCMC step.
 3. **Running an ensemble MCMC sampler** ([`emcee`](https://emcee.readthedocs.io)) to obtain
@@ -145,8 +145,22 @@ emission at 1–2σ. We use a **two-run workflow**:
 
 1. **Detection check** — broad priors (±1 pix on dx/dy) to confirm the
    source is genuinely absent.
-2. **Upper limit** — tight priors (±0.1 pix) to derive the official 3σ
-   bound from the 99.7th percentile of the posterior flux.
+2. **Upper limit** — tight priors (±0.1 pix) to derive the 3σ bound from
+   the posterior flux distribution.
+
+Two conventions for the 3σ bound are supported, and they answer slightly
+different questions:
+
+| Convention | Definition | When to prefer it |
+|---|---|---|
+| **99.7th percentile** | The flux below which 99.7 % of the posterior samples fall | Makes no assumption about the shape of the posterior. Correct when the flux posterior is skewed or truncated (e.g. by a non-negative flux prior). |
+| **3 × σ** | `median + 3 × std` of the posterior | Matches the convention most transient and SN-rate papers quote, so it is the comparable number when placing limits alongside published work. |
+
+For a clean non-detection with a flux prior spanning negative values the
+posterior is near-Gaussian and centred on zero, so the two agree closely;
+their divergence is itself a useful diagnostic that the posterior is
+non-Gaussian and that the percentile should be trusted. Whichever you adopt,
+state it explicitly when publishing — the two are not interchangeable.
 
 ```python
 data_nd   = fits.getdata("examples/data/example1_f200w_diff.fits")
@@ -176,36 +190,56 @@ sampler_nd_tight = jpm.run_mcmc(**fit_nd_tight, nsteps=2000, ncores=4,
                                 progress=True)
 
 flat_flux = sampler_nd_tight.get_chain(discard=500, thin=4, flat=True)[:, 0]
-upper_limit_3sigma = float(np.percentile(flat_flux, 99.7))
-print(f"3-sigma upper limit on flux: {upper_limit_3sigma:.4f}")
+
+# Convention A — posterior quantile (distribution-free)
+ul_percentile = float(np.percentile(flat_flux, 99.7))
+
+# Convention B — Gaussian-equivalent, median + 3 x sigma
+ul_3sigma = float(np.median(flat_flux) + 3.0 * np.std(flat_flux, ddof=1))
+
+print(f"3-sigma upper limit (99.7th percentile): {ul_percentile:.4f}")
+print(f"3-sigma upper limit (median + 3*sigma):  {ul_3sigma:.4f}")
 ```
 
 ---
 
 ## Full Worked Examples
 
+Both notebooks run end to end against the bundled example data. Clone the
+repository to use them — the FITS files live in `examples/` and are not shipped
+inside the installed package.
+
 ### Covariance kernel estimation
 
-See **[`examples/demo_covariance_kernel.ipynb`](examples/demo_covariance_kernel.ipynb)** for
-a step-by-step demonstration of estimating the pixel-to-pixel covariance kernel
-from JWST difference images:
+See **[`examples/demo_covariance_kernel.ipynb`](examples/demo_covariance_kernel.ipynb)**
+for a step-by-step demonstration of measuring the pixel-to-pixel covariance of a
+JWST difference image (F444W example):
 
-- Source masking and finding source-free sky regions
-- Autocorrelation-based kernel estimation
-- Cosine-bell windowing and power spectrum computation
-- Pixel correlation whitening demonstration
+- Source masking and locating source-free sky regions (`get_source_mask`,
+  `find_zero_squares`)
+- Autocorrelation-based kernel estimation (`estimate_cov_kernel`)
+- Cosine-bell windowing (`SplitCosineBellWindow`) and the Fourier power spectrum
+  (`kernel_power_spectrum`)
+- Whitening the sky patch (`whiten_image`) and confirming what it does: because
+  the kernel spectrum has unit mean, the RMS is preserved (ratio 1.0002), while
+  the nearest-neighbour pixel correlation falls from 0.61 to 0.03
 
 ### PSF photometry with MCMC
 
 See **[`examples/demo_psf_photometry.ipynb`](examples/demo_psf_photometry.ipynb)** for a
-step-by-step notebook covering:
+step-by-step notebook covering both regimes, using two epochs of the same source:
 
 - Loading and inspecting the JWST cutout data
-- Estimating and visualising the covariance kernel
-- Running MCMC for a **non-detection** (example1) and deriving a rigorous 3-σ upper limit
-- Running MCMC for a clear **detection** (example2) and extracting flux posteriors
+- Estimating and visualising the covariance kernel and its power spectrum
+- **Non-detection** (example1) — the two-run workflow, and a 3σ upper limit
+  reported under both the 99.7th-percentile and `median + 3σ` conventions
+- **Detection** (example2) — flux posterior, detection significance, and the
+  total flux corrected for PSF energy falling outside the stamp
+  (`summarize_flux_from_chain`); in this example ~23 % of the PSF lies outside
+  the 9×9 cutout, so the correction matters
 - Diagnosing convergence via chain traces and autocorrelation times
-- Producing publication-quality corner plots and residual triptychs
+- Producing corner plots and residual triptychs
+- Saving and reloading posteriors (`save_emcee_results` / `load_emcee_results`)
 
 ---
 
@@ -214,7 +248,7 @@ step-by-step notebook covering:
 | Module | Contents |
 |--------|----------|
 | `jwst_psfmc.psf` | PSF shifting, downsampling, model evaluation |
-| `jwst_psfmc.covariance` | Covariance kernel estimation, Fourier-space pre-computation |
+| `jwst_psfmc.covariance` | Covariance kernel estimation, power spectrum, whitening, Fourier-space pre-computation |
 | `jwst_psfmc.mcmc` | MCMC preparation, log-prob, `run_mcmc`, posterior summaries |
 | `jwst_psfmc.io` | Save/load `.npz` results |
 | `jwst_psfmc.plot` | Triptych, chain traces, corner plot |
@@ -225,7 +259,7 @@ step-by-step notebook covering:
 
 If you use `jwst_psfmc` in your research, please cite:
 
-> Zhuang et al. (in prep.), *NEXUS JWST Transient Survey Year 1*
+> Zhuang et al. (arXiv:xxxxxx[]), *NEXUS: Transient Searches and First Results from Year One Observations*
 
 ---
 

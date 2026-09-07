@@ -13,6 +13,8 @@ uncertainties. This module provides tools to:
 
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 from scipy.signal import fftconvolve
 from scipy.ndimage import grey_dilation
@@ -25,6 +27,13 @@ from photutils.segmentation import detect_sources, make_2dgaussian_kernel
 # ---------------------------------------------------------------------------
 # Window function helpers
 # ---------------------------------------------------------------------------
+
+# Recommended patch size for estimate_cov_kernel, as a multiple of the
+# effective taper radius. Below this the autocorrelation is estimated from too
+# few independent lags: measured bias against a large-patch reference is ~13 %
+# at 2 x r_out, ~5 % at 4 x, ~1 % at 10 x.
+_PATCH_LAGS = 4.0
+
 
 def distance_grid(shape: tuple[int, int]) -> np.ndarray:
     """Return a 2-D array of Euclidean distances from the array centre.
@@ -104,9 +113,11 @@ def SplitCosineBellWindow(
 def get_source_mask(image: np.ndarray, npixels: int = 15) -> np.ndarray:
     """Detect sources and return a boolean mask with dilated footprints.
 
-    Uses ``photutils`` segmentation on a Gaussian-smoothed image to detect
-    compact sources, then expands each mask footprint by 2 pixels using a
-    circular structuring element.
+    The image is smoothed with a Gaussian kernel, the detection threshold is
+    measured from that smoothed image as ``median + 3 * std`` (sigma-clipped),
+    and ``photutils`` segmentation is run on the same smoothed image. Each
+    detected footprint is then expanded by 2 pixels with a circular
+    structuring element.
 
     Parameters
     ----------
@@ -119,7 +130,9 @@ def get_source_mask(image: np.ndarray, npixels: int = 15) -> np.ndarray:
     Returns
     -------
     source_mask : ndarray of shape ``image.shape``, bool
-        *True* where a source (or its dilated footprint) is present.
+        *True* where a source (or its dilated footprint) is present. All
+        *False* if no region meets the *npixels* threshold, which is the
+        expected result for a genuinely source-free image.
 
     Notes
     -----
@@ -132,7 +145,15 @@ def get_source_mask(image: np.ndarray, npixels: int = 15) -> np.ndarray:
     image_conv = convolve(image, make_2dgaussian_kernel(3, 5), normalize_kernel=True)
     _, median, std = sigma_clipped_stats(image_conv, sigma=3)
     threshold = median + 3.0 * std
-    segm = detect_sources(image, threshold, npixels=npixels)
+
+    # Detect on the same (smoothed) image the threshold was measured from.
+    # Thresholding the unsmoothed image with a threshold derived from the
+    # smoothed one applies an effective cut of well under 3 sigma and flags a
+    # large fraction of blank sky as sources.
+    segm = detect_sources(image_conv, threshold, npixels=npixels)
+    if segm is None:                      # genuinely source-free image
+        return np.zeros(image.shape, dtype=bool)
+
     mask = segm.data > 0
     footprint = circular_footprint(2)
     source_mask = grey_dilation(mask, footprint=footprint)
@@ -239,18 +260,24 @@ def estimate_cov_kernel(
 
     The algorithm:
 
-    1. Replaces NaN pixels with Gaussian random noise at the local RMS to
+    1. Replaces NaN pixels with Gaussian random noise drawn from the
+       sigma-clipped mean and standard deviation of the whole patch, to
        avoid Fourier ringing artefacts.
     2. Subtracts the sigma-clipped mean.
     3. Computes the 2-D autocorrelation function via ``fftconvolve``.
     4. Extracts a central sub-image of shape ``(size, size)``.
     5. Tapers to zero beyond radius *r_out* using a split-cosine-bell window.
+       The taper radii are clipped to the kernel half-width, so if
+       ``r_out > (size - 1) / 2`` the effective outer radius is reduced and the
+       kernel is truncated at the array edge rather than tapered to zero.
 
     Parameters
     ----------
     sky_patch : ndarray, 2-D
-        Source-free region of the difference (or science) image. Should be
-        ≳ 3–5 × *size* in each dimension for a reliable estimate.
+        Source-free region of the difference (or science) image. Must be at
+        least *size* pixels on each side. For a well-sampled kernel prefer at
+        least ``4 × min(r_out, (size - 1) / 2)`` pixels per side (24 px with
+        the defaults); a smaller patch is accepted with a ``RuntimeWarning``.
     size : int, optional
         Side length of the output kernel in pixels. Must be odd ≥ 3.
         Default ``15``.
@@ -265,10 +292,23 @@ def estimate_cov_kernel(
         Normalised, windowed covariance kernel. Peak value is 1.0 before
         windowing; windowing tapers it smoothly to 0.0 at the edges.
 
+        The shape is always ``(size, size)``; a patch smaller than *size*
+        raises ``ValueError`` rather than returning a truncated kernel.
+
     Raises
     ------
     ValueError
-        If *size* is even or less than 3, or if *sky_patch* is not 2-D.
+        If *sky_patch* is not 2-D, *size* is even or less than 3,
+        *r_out* is not greater than *r_in*, *sky_patch* is smaller than
+        *size* on either axis, or the autocorrelation is identically zero
+        (a constant *sky_patch*).
+
+    Warns
+    -----
+    RuntimeWarning
+        If the patch is small relative to the effective taper radius, in
+        which case the kernel is biased low and noisy.
+
     """
     sky_patch = np.array(sky_patch, dtype=np.float64)
     if sky_patch.ndim != 2:
@@ -277,6 +317,39 @@ def estimate_cov_kernel(
         raise ValueError("size must be an odd integer >= 3")
     if r_out <= r_in:
         raise ValueError("r_out must be greater than r_in")
+
+    # Two separate requirements on the patch size:
+    #
+    #   * a hard one, `min(shape) >= size`, because the central crop below
+    #     indexes acf[cy - size//2 : cy + size//2 + 1] and a smaller patch makes
+    #     the start negative, which NumPy reads as an offset from the end -
+    #     silently returning a tiny kernel (12x12 patch, size=15 -> 1x1 delta);
+    #   * a statistical one, set by the taper radius rather than by `size`. The
+    #     window zeroes the kernel beyond r_out, so r_out is the largest lag
+    #     actually measured, and estimator noise depends on how many
+    #     independent lags of that scale fit in the patch.
+    effective_r_out = min(r_out, (size - 1) / 2.0)
+    recommended = int(np.ceil(_PATCH_LAGS * effective_r_out))
+
+    if min(sky_patch.shape) < size:
+        raise ValueError(
+            f"sky_patch has shape {sky_patch.shape}, which is smaller than "
+            f"size={size} on at least one axis. The patch must be at least "
+            f"{size} pixels on each side, and at least {recommended} px is "
+            "recommended for a well-sampled kernel. Use a smaller `size` or a "
+            "larger source-free region."
+        )
+
+    if min(sky_patch.shape) < recommended:
+        warnings.warn(
+            f"sky_patch is {sky_patch.shape} for an effective taper radius of "
+            f"{effective_r_out:g} px. The autocorrelation is estimated from few "
+            "independent lags and the kernel will be biased low and noisy "
+            f"(measured ~13 % low at this ratio). Prefer at least {recommended} "
+            "px per side.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
 
     mean, median, std = sigma_clipped_stats(sky_patch, sigma=3, maxiters=10)
     nan_mask = np.isnan(sky_patch)
@@ -303,6 +376,180 @@ def estimate_cov_kernel(
 
     window = SplitCosineBellWindow(kernel.shape, alpha=alpha, beta=beta)
     return kernel * window
+
+
+def kernel_power_spectrum(
+    kernel: np.ndarray,
+    shape: tuple[int, int],
+    eps: float = 1e-8,
+) -> np.ndarray:
+    """Fourier power spectrum of a covariance kernel on a given image grid.
+
+    The kernel is centre-cropped along any axis where it is larger than
+    *shape*, centre-padded with zeros where it is smaller, shifted so its
+    centre sits at the array origin, and transformed. The result is the
+    per-frequency noise power :math:`P(\\mathbf{k})` used by the
+    correlated-noise likelihood and by :func:`whiten_image`.
+
+    Because :func:`estimate_cov_kernel` normalises the autocorrelation peak to
+    unity, the mean of the returned spectrum is also unity. Dividing Fourier
+    amplitudes by ``sqrt(P)`` therefore preserves the total variance of the
+    image (Parseval), provided no part of the spectrum has been raised by the
+    *eps* clip — see :func:`whiten_image`.
+
+    Parameters
+    ----------
+    kernel : ndarray, 2-D
+        Covariance kernel, e.g. from :func:`estimate_cov_kernel`. May be
+        larger or smaller than *shape* along either axis.
+    shape : (ny, nx)
+        Shape of the image grid on which the spectrum is evaluated.
+    eps : float, optional
+        Lower clip keeping the spectrum strictly positive. Default ``1e-8``.
+
+    Returns
+    -------
+    power_spectrum : ndarray, 2-D
+        Real power spectrum of shape *shape*, clipped to ``>= eps``.
+
+    Raises
+    ------
+    ValueError
+        If *kernel* is not 2-D, contains non-finite values, or *shape* is not
+        a pair of positive integers.
+    """
+    kernel = np.asarray(kernel, dtype=np.float64)
+    if kernel.ndim != 2:
+        raise ValueError("kernel must be a 2-D array")
+    if not np.all(np.isfinite(kernel)):
+        raise ValueError("kernel must not contain NaN or Inf")
+
+    try:
+        ny, nx = (int(shape[0]), int(shape[1]))
+    except (TypeError, IndexError, ValueError):
+        raise ValueError("shape must be a pair of integers (ny, nx)") from None
+    if ny < 1 or nx < 1:
+        raise ValueError("shape entries must be positive")
+
+    ky, kx = kernel.shape
+    if ky > ny:
+        sy = (ky - ny) // 2
+        kernel = kernel[sy : sy + ny, :]
+        ky = kernel.shape[0]
+    if kx > nx:
+        sx = (kx - nx) // 2
+        kernel = kernel[:, sx : sx + nx]
+        kx = kernel.shape[1]
+
+    kernel_padded = np.zeros((ny, nx), dtype=np.float64)
+    y0 = (ny - ky) // 2
+    x0 = (nx - kx) // 2
+    kernel_padded[y0 : y0 + ky, x0 : x0 + kx] = kernel
+
+    # Move the kernel centre to index (0, 0). np.fft.ifftshift does this only
+    # when the centre happens to land on shape // 2, which holds for odd-sized
+    # grids but not for even ones; rolling by the actual centre is exact for
+    # both and identical to ifftshift in the odd case.
+    cy = y0 + ky // 2
+    cx = x0 + kx // 2
+    kernel_at_origin = np.roll(kernel_padded, (-cy, -cx), axis=(0, 1))
+
+    power_spectrum = np.real(np.fft.fft2(kernel_at_origin))
+    return np.clip(power_spectrum, eps, None)
+
+
+def whiten_image(
+    image: np.ndarray,
+    kernel: np.ndarray | None = None,
+    power_spectrum: np.ndarray | None = None,
+    eps: float = 1e-8,
+) -> np.ndarray:
+    """Remove pixel-to-pixel noise correlations from an image.
+
+    Divides the image's Fourier amplitudes by the square root of the noise
+    power spectrum, mapping correlated (drizzle-smoothed) noise back to
+    approximately white noise. This is a diagnostic and visualisation tool:
+    the MCMC likelihood applies the same weighting internally via
+    :func:`prepare_covariance_terms`, so images do not need to be whitened
+    before fitting.
+
+    The divisor must be the power spectrum of the **covariance kernel**. Using
+    the image's own periodogram instead flattens every Fourier mode to the same
+    amplitude — a phase-only transform that discards the signal and forces the
+    output RMS to 1 regardless of the input.
+
+    Since the kernel spectrum has unit mean, the whitened image retains the
+    RMS of the original; what changes is the correlation between neighbouring
+    pixels, which drops to near zero.
+
+    That variance preservation holds only while the spectrum stays above the
+    *eps* floor. Where the modelled noise power underflows — which happens if
+    the kernel is estimated from heavily over-smoothed data, or if it does not
+    describe the image being whitened — those modes are clipped and then
+    amplified by ``1 / sqrt(eps)``, and the output RMS can exceed the input by
+    orders of magnitude. A :class:`RuntimeWarning` is issued when more than 1 %
+    of modes are clipped. Real drizzled difference images retain a
+    high-frequency noise floor and clip no modes at all (measured: 0 % on the
+    bundled F200W and F444W examples), but heavily smoothed data whose power
+    genuinely underflows will clip a large fraction - heed the warning.
+
+    Parameters
+    ----------
+    image : ndarray, 2-D
+        Image to whiten, typically a source-free sky patch. Must be finite;
+        subtract the background first.
+    kernel : ndarray, 2-D or None, optional
+        Covariance kernel. Its power spectrum is computed on *image*'s grid.
+        Provide exactly one of *kernel* or *power_spectrum*.
+    power_spectrum : ndarray, 2-D or None, optional
+        Pre-computed power spectrum from :func:`kernel_power_spectrum`, with
+        the same shape as *image*. Provide exactly one of *kernel* or
+        *power_spectrum*.
+    eps : float, optional
+        Lower clip on the power spectrum. Default ``1e-8``.
+
+    Returns
+    -------
+    whitened : ndarray, 2-D
+        Whitened image, same shape as *image*.
+
+    Raises
+    ------
+    ValueError
+        If *image* is not 2-D or not finite, if neither or both of *kernel*
+        and *power_spectrum* are given, or if *power_spectrum* does not match
+        the shape of *image*.
+    """
+    image = np.asarray(image, dtype=np.float64)
+    if image.ndim != 2:
+        raise ValueError("image must be a 2-D array")
+    if not np.all(np.isfinite(image)):
+        raise ValueError("image must not contain NaN or Inf")
+
+    if (kernel is None) == (power_spectrum is None):
+        raise ValueError("provide exactly one of kernel or power_spectrum")
+
+    if power_spectrum is None:
+        power_spectrum = kernel_power_spectrum(kernel, image.shape, eps=eps)
+    else:
+        power_spectrum = np.asarray(power_spectrum, dtype=np.float64)
+        if power_spectrum.shape != image.shape:
+            raise ValueError("power_spectrum must have the same shape as image")
+        power_spectrum = np.clip(power_spectrum, eps, None)
+
+    clipped_fraction = float(np.mean(power_spectrum <= eps))
+    if clipped_fraction > 0.01:
+        warnings.warn(
+            f"{100 * clipped_fraction:.1f}% of Fourier modes have noise power at "
+            f"or below eps={eps:g} and were clipped. Whitening amplifies these "
+            "modes by 1/sqrt(eps), so the result is unreliable and its RMS may "
+            "greatly exceed the input. Check that the covariance kernel "
+            "describes this image.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+
+    return np.real(np.fft.ifft2(np.fft.fft2(image) / np.sqrt(power_spectrum)))
 
 
 # ---------------------------------------------------------------------------
@@ -345,15 +592,21 @@ def prepare_covariance_terms(
         weight ≤ 0 or non-finite are excluded from the fit. If *None*, all
         valid pixels are weighted equally.
 
+        Non-finite *data* or *err*, and ``err <= 0``, are silently excluded as
+        well; a ``ValueError`` is raised only if no valid pixel remains. Check
+        the returned ``'valid'`` mask if that matters.
+
     Returns
     -------
     prepared : dict
         Keys:
 
         * ``'data'`` – masked data array (invalid pixels zeroed).
-        * ``'err'`` – masked error array.
+        * ``'err'`` – error array with invalid pixels replaced by the median
+          of the valid ones (not masked; those pixels carry zero weight).
         * ``'valid'`` – boolean mask of pixels used in the fit.
-        * ``'fit_weight'`` – weight map (ones if not supplied).
+        * ``'fit_weight'`` – weight map, zeroed at invalid pixels (ones
+          elsewhere if not supplied).
         * ``'power_spectrum'`` – FFT power spectrum of the kernel,
           clipped to ≥ 1 × 10⁻⁸.
         * ``'shape'`` – ``(ny, nx)`` of the data stamp.
@@ -392,26 +645,7 @@ def prepare_covariance_terms(
     data_use = np.where(effective_valid, data, 0.0)
     err_use = np.where(effective_valid, err, np.nanmedian(err[valid]))
 
-    ny, nx = data.shape
-    ky, kx = kernel.shape
-
-    if ky > ny:
-        sy = (ky - ny) // 2
-        kernel = kernel[sy : sy + ny, :]
-        ky = kernel.shape[0]
-    if kx > nx:
-        sx = (kx - nx) // 2
-        kernel = kernel[:, sx : sx + nx]
-        kx = kernel.shape[1]
-
-    kernel_padded = np.zeros((ny, nx), dtype=np.float64)
-    y0 = (ny - ky) // 2
-    x0 = (nx - kx) // 2
-    kernel_padded[y0 : y0 + ky, x0 : x0 + kx] = kernel
-
-    kernel_shifted = np.fft.ifftshift(kernel_padded)
-    power_spectrum = np.real(np.fft.fft2(kernel_shifted))
-    power_spectrum = np.clip(power_spectrum, 1e-8, None)
+    power_spectrum = kernel_power_spectrum(kernel, data.shape)
 
     return {
         "data": data_use,

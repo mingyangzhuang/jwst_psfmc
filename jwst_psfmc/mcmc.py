@@ -12,18 +12,29 @@ drizzle noise (see :func:`log_likelihood_cov_prepared`).
 
 Typical workflow
 ----------------
->>> prepared = prepare_covariance_terms(data, err, cov_kernel)
->>> psf_os, native_shape, frac = prepare_psf_for_oversamp(
-...     psf_raw, oversamp=4, native_shape=(11, 11), return_fraction=True)
->>> fit = prepare_for_fitting(data, err, psf_os, cov_kernel,
+``prepare_for_fitting`` takes the **raw** oversampled PSF and the covariance
+kernel and does the preparation itself - do not pre-crop the PSF with
+``prepare_psf_for_oversamp`` or pre-compute ``prepare_covariance_terms`` and
+pass those in. Passing an already-cropped PSF makes the encircled-energy
+fraction come out as 1.0 instead of its true value, which biases the fitted
+flux low.
+
+>>> fit = prepare_for_fitting(data, err, psf_raw, cov_kernel,
 ...                           dx_init=0.05, dy_init=-0.10)
->>> sampler = run_mcmc(**fit)
+>>> sampler = run_mcmc(**fit, nsteps=4000, ncores=8)
 >>> summary = summarize_emcee(sampler, burnin=500, thin=4)
+>>> flux = summarize_flux_from_chain(
+...     sampler, burnin=500, thin=4,
+...     psf_os=fit["psf_os"], oversamp=fit["oversamp"],
+...     native_shape=fit["native_shape"], output_shape=data.shape,
+...     psf_prepare_fraction=fit["psf_prepare_fraction"])
 """
 
 from __future__ import annotations
 
 import multiprocessing as mp
+
+import warnings
 
 import numpy as np
 import emcee
@@ -175,8 +186,9 @@ def log_prob_prepared(
         ``[flux, dx, dy, bkg]``.
     prepared : dict
         Output of :func:`~jwst_psfmc.covariance.prepare_covariance_terms`.
-    psf_os : ndarray
-        Pre-cropped oversampled PSF.
+    psf_os : ndarray or None
+        Pre-cropped oversampled PSF, i.e. ``prepare_for_fitting(...)['psf_os']``.
+        Required in practice - a ``ValueError`` is raised if it is None.
     oversamp : int
         Oversampling factor.
     prior_bounds : dict or None, optional
@@ -219,6 +231,7 @@ def prepare_for_fitting(
     native_shape: tuple[int, int] = (11, 11),
     nwalkers: int = 48,
     flux_prior_scale: float = 30.0,
+    flux_prior_min: float = -3.0,
     pos_prior_half_width: float = 1.0,
     bkg_prior_half_width: float = 0.1,
     fit_weight: np.ndarray | None = None,
@@ -246,13 +259,42 @@ def prepare_for_fitting(
     oversamp : int, optional
         Integer oversampling factor of *psf_os*. Default ``4``.
     native_shape : (ny, nx), optional
-        Desired native PSF shape. Default ``(11, 11)``.
+        Size of the native-resolution PSF grid the model is evaluated on,
+        before it is cropped or padded to the shape of *data*. Default
+        ``(11, 11)``.
+
+        Use an **odd** shape. An even value is passed through to
+        :func:`~jwst_psfmc.psf.prepare_psf_for_oversamp` and then reduced by
+        the odd-size crop inside :func:`~jwst_psfmc.psf.downsample_psf`,
+        discarding flux that the encircled-energy fraction does not account
+        for and biasing the fitted flux by ~1-2 %.
+
+        The shape is deliberately allowed to be **larger than the data stamp**.
+        A 9×9 stamp with ``native_shape=(11, 11)`` leaves a one-pixel margin
+        on every side, so a source that is not well centred can shift by up
+        to a pixel without the model being truncated at the stamp edge. Set
+        it equal to the stamp shape only when the source is known to be
+        well centred.
     nwalkers : int, optional
         Number of ``emcee`` walkers. Must be even and ≥ 2 × ndim (= 8).
         Default ``48``.
     flux_prior_scale : float, optional
-        Upper flux prior bound = ``flux_prior_scale × max(MAX, 0.1)``, where
+        Scales the **upper** flux prior bound, which is
+        ``flux_prior_scale × max(MAX, 0.1)`` where ``MAX`` is the peak pixel
+        of *data*. The lower bound is set separately by *flux_prior_min*., where
         *MAX* is the peak pixel value of the stamp. Default ``30``.
+    flux_prior_min : float, optional
+        Lower bound of the uniform flux prior, in image flux units. Default
+        ``-3.0``.
+
+        Unlike the upper bound this is an absolute value, not scaled by the
+        data. The default suits a source that is absent or positive in the
+        difference image. A source that has **faded** relative to the reference
+        epoch has genuinely negative flux, and if its true value lies below
+        this bound the posterior piles up against the wall and reports a
+        spuriously tight error bar — pass a more negative value (for example
+        ``-flux_prior_scale * max(abs(data).max(), 0.1)``) in that case.
+
     pos_prior_half_width : float, optional
         Half-width of the uniform prior on dx and dy in native pixels.
         Default ``1.0``.
@@ -283,7 +325,7 @@ def prepare_for_fitting(
         RMS = 0.2
 
     prior_bounds = {
-        "flux": (-3.0, flux_prior_scale * max(MAX, 0.1)),
+        "flux": (flux_prior_min, flux_prior_scale * max(MAX, 0.1)),
         "dx": (dx_init - pos_prior_half_width, dx_init + pos_prior_half_width),
         "dy": (dy_init - pos_prior_half_width, dy_init + pos_prior_half_width),
         "bkg": (-bkg_prior_half_width, bkg_prior_half_width),
@@ -323,7 +365,6 @@ def run_mcmc(
     nsteps: int = 2000,
     ncores: int | None = None,
     progress: bool = True,
-    **_extra,
 ) -> emcee.EnsembleSampler:
     """Run the ``emcee`` ensemble sampler with an optional multiprocessing pool.
 
@@ -362,7 +403,10 @@ def run_mcmc(
     Notes
     -----
     The acceptance fraction should be between ~0.2 and ~0.5.  If it is
-    consistently below 0.1, widen the prior bounds or increase *nsteps*.
+    If it is consistently below 0.1 the sampler is stuck rather than
+    under-run - increasing *nsteps* will not change it. The usual cause is
+    walkers pinned against a prior wall, so check ``prior_bounds`` and the
+    initial positions.
     After the run, check convergence with
     ``sampler.get_autocorr_time(quiet=True)``; aim for
     ``nsteps / tau > 50``.
@@ -457,6 +501,7 @@ def summarize_flux_from_chain(
     native_shape: tuple[int, int] | None = None,
     output_shape: tuple[int, int] | None = None,
     psf_prepare_fraction: float = 1.0,
+    fit: dict | None = None,
 ) -> dict:
     """Summarise total and in-stamp flux posteriors accounting for PSF encircled energy.
 
@@ -480,9 +525,17 @@ def summarize_flux_from_chain(
     native_shape : (ny, nx) or None, optional
         Native PSF shape.
     output_shape : (ny, nx) or None, optional
-        Stamp shape (used to determine in-stamp fraction).
+        Stamp shape, used to determine the in-stamp fraction. Pass the shape of
+        the fitted data. If left None no crop is applied, so
+        ``stamp_flux_sum`` is not an in-stamp flux and
+        ``total_encircled_fraction`` degenerates to *psf_prepare_fraction*.
     psf_prepare_fraction : float, optional
         Encircled-energy fraction from :func:`~jwst_psfmc.psf.prepare_psf_for_oversamp`.
+    fit : dict or None, optional
+        The dict returned by :func:`prepare_for_fitting`. Any of *psf_os*,
+        *oversamp*, *native_shape*, *output_shape* and *psf_prepare_fraction*
+        left at its default is taken from it, which is the reliable way to make
+        the model geometry match the fit. Explicit arguments take precedence.
 
     Returns
     -------
@@ -496,11 +549,37 @@ def summarize_flux_from_chain(
     ValueError
         If *psf_os* is not provided or the chain is empty.
     """
+    if fit is not None:
+        # Fill anything the caller left unset from the prepare_for_fitting dict,
+        # so the model geometry matches what was actually fitted. Explicit
+        # arguments still win.
+        if psf_os is None:
+            psf_os = fit["psf_os"]
+        if native_shape is None:
+            native_shape = fit.get("native_shape")
+        if output_shape is None:
+            output_shape = fit["prepared"]["shape"]
+        if psf_prepare_fraction == 1.0:
+            psf_prepare_fraction = fit["psf_prepare_fraction"]
+        if oversamp == 4:
+            oversamp = fit.get("oversamp", oversamp)
+
     flat = sampler.get_chain(discard=burnin, thin=thin, flat=True)
     if flat.size == 0:
         raise ValueError("Empty chain after burn-in/thinning")
     if psf_os is None:
-        raise ValueError("psf_os is required")
+        raise ValueError("psf_os is required (or pass fit=<prepare_for_fitting dict>)")
+
+    if output_shape is None:
+        warnings.warn(
+            "output_shape is None, so no crop to the data stamp is applied: "
+            "'stamp_flux_sum' is not an in-stamp flux and "
+            "'total_encircled_fraction' collapses to psf_prepare_fraction "
+            f"(={psf_prepare_fraction:g}) with no spread. Pass the shape of the "
+            "fitted data, or fit=<prepare_for_fitting dict>.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
 
     total_flux = flat[:, 0]
     stamp_flux = np.empty_like(total_flux)

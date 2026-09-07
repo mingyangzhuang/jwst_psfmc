@@ -49,20 +49,33 @@ def save_emcee_results(
     labels : tuple of str, optional
         Parameter names in chain order.
     include_log_prob : bool, optional
-        If *True*, store the full log-probability chain (and flat version)
-        in the archive. Default *True*.
+        If *True*, attempt to store the full log-probability chain (and flat
+        version) in the archive. A sampler that cannot supply it is tolerated:
+        the keys are then absent from both the archive and the returned
+        payload. Default *True*.
 
     Returns
     -------
     payload : dict
-        The exact data saved to the archive (useful for immediate inspection
-        without re-loading from disk).
+        The data saved to the archive (useful for immediate inspection without
+        re-loading from disk). The stored ``'tau'`` is the integrated
+        autocorrelation time estimated on the **post-burn-in** chain, in units
+        of steps, and ``'tau_ok'`` records whether that estimate succeeded.
 
     Raises
     ------
     ValueError
         If the number of *labels* does not match the sampler ``ndim``, or
         if the chain is empty after applying *burnin* and *thin*.
+    AttributeError
+        If *sampler* has no chain because it was never run.
+
+    Notes
+    -----
+    ``np.savez_compressed`` appends ``.npz`` unless the name already ends in
+    it, so ``save_emcee_results("run_v1.2", ...)`` writes ``run_v1.2.npz``.
+    :func:`load_emcee_results` applies the same rule, so either spelling of
+    the path loads it back.
     """
     from .mcmc import summarize_emcee  # local import to avoid circularity
 
@@ -81,7 +94,13 @@ def save_emcee_results(
     summary = summarize_emcee(sampler, burnin=burnin, thin=thin, labels=labels)
 
     try:
-        tau = np.asarray(sampler.get_autocorr_time(), dtype=float)
+        # Measure tau on the post-burn-in chain: including burn-in leaves the
+        # transient in the series and inflates tau, so tau_ok reads False for
+        # chains that have in fact converged. The chain is deliberately not
+        # thinned here - tau is what justifies a thinning factor, and a chain
+        # thinned first cannot resolve a tau below that factor. emcee already
+        # returns the result in units of steps.
+        tau = np.asarray(sampler.get_autocorr_time(discard=burnin), dtype=float)
         tau_ok = True
         tau_error = ""
     except Exception as exc:
@@ -130,7 +149,11 @@ def load_emcee_results(path: str | Path) -> dict:
     Parameters
     ----------
     path : str or Path
-        Path to the ``.npz`` file (with or without the extension).
+        Path to the archive, with or without the ``.npz`` extension. The
+        suffix is appended when the name does not already end in ``.npz``,
+        matching what :func:`save_emcee_results` writes — including for names
+        that contain a dot, such as ``"sn2023abc_v1.2"``. A file stored
+        without the suffix is also loaded if it exists.
 
     Returns
     -------
@@ -144,11 +167,18 @@ def load_emcee_results(path: str | Path) -> dict:
         * ``'burnin'``, ``'thin'`` – ints used when saving.
         * ``'summary'`` – dict of ``{label: {'median', 'minus_1sigma',
           'plus_1sigma'}}`` for each parameter.
+        * ``'tau_error'`` – empty string, or the reason tau could not be
+          estimated.
         * ``'tau'`` – integrated autocorrelation time array (NaN if not
           converged when saved).
         * ``'tau_ok'`` – bool.
         * ``'acceptance_fraction'`` – per-walker acceptance fraction array.
-        * Additional optional keys: ``'log_prob'``, ``'flat_log_prob'``.
+        * Additional optional keys: ``'log_prob'``, ``'flat_log_prob'`` -
+          present only if they were stored and readable at save time.
+
+        ``ndim``, ``nwalkers`` and ``nsteps`` are written to the archive by
+        :func:`save_emcee_results` but are not returned here; read them from
+        ``chain.shape`` if needed.
 
     Raises
     ------
@@ -156,10 +186,21 @@ def load_emcee_results(path: str | Path) -> dict:
         If the archive does not exist at *path*.
     """
     path = Path(path)
-    if not path.suffix:
-        path = path.with_suffix(".npz")
-    if not path.exists():
-        raise FileNotFoundError(f"MCMC result archive not found: {path}")
+
+    # Mirror numpy.savez_compressed, which appends ".npz" unless the name
+    # already ends with it. Path.with_suffix cannot be used: for a name like
+    # "run_v1.2" it would *replace* the trailing ".2" and look for
+    # "run_v1.npz", and testing `path.suffix` alone would skip appending
+    # entirely. Both give a FileNotFoundError for a file that was written.
+    candidate = path if path.name.endswith(".npz") else path.with_name(path.name + ".npz")
+    if not candidate.exists() and path.exists():
+        candidate = path        # archive stored under a name without the suffix
+    if not candidate.exists():
+        raise FileNotFoundError(
+            f"MCMC result archive not found: {candidate}"
+            + ("" if candidate == path else f" (nor {path})")
+        )
+    path = candidate
 
     res = np.load(path, allow_pickle=False)
 

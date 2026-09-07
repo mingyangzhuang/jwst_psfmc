@@ -1,11 +1,15 @@
 """
 Visualisation utilities for PSF photometry diagnostics.
 
-All plotting functions return ``(fig, axes)`` without saving or closing the
+Plotting functions return ``(fig, axes)``, except
+:func:`plot_psf_fit_triptych` with ``return_meta=True``, which returns
+``(fig, axes, meta)`` without saving or closing the
 figure, letting the caller decide on output format and file path.
 """
 
 from __future__ import annotations
+
+import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,8 +22,8 @@ from .psf import psf_model
 def plot_psf_fit_triptych(
     data: np.ndarray,
     error: np.ndarray,
-    psf_os: np.ndarray,
-    oversamp: int,
+    psf_os: np.ndarray | None = None,
+    oversamp: int | None = None,
     native_shape: tuple[int, int] | None = None,
     psf_prepare_fraction: float = 1.0,
     param: np.ndarray | None = None,
@@ -29,10 +33,12 @@ def plot_psf_fit_triptych(
     resid_cmap: str = "coolwarm",
     fig_title: str = "",
     return_meta: bool = False,
+    fit: dict | None = None,
 ) -> tuple:
     """Plot data / PSF model / normalised residual side by side.
 
-    Exactly one of *param*, *summary_median*, or *summary* must be provided.
+    Provide one of *param*, *summary_median* or *summary*. If more than one is
+    given they take precedence in that order; the others are ignored.
 
     Parameters
     ----------
@@ -62,13 +68,21 @@ def plot_psf_fit_triptych(
         Colormap for the residual panel. Default ``'coolwarm'``.
     fig_title : str, optional
         Overall figure suptitle. Default ``''``.
+    fit : dict or None, optional
+        The dict returned by :func:`~jwst_psfmc.mcmc.prepare_for_fitting`. Any
+        of *psf_os*, *oversamp*, *native_shape* and *psf_prepare_fraction* left
+        at its default is taken from it, which is the reliable way to plot a
+        model normalised exactly like the fitted one. Explicit arguments take
+        precedence.
     return_meta : bool, optional
         If *True*, also return a metadata dictionary.
 
     Returns
     -------
     fig : matplotlib.figure.Figure
-    axes : ndarray of matplotlib.axes.Axes, shape (3,)
+    axes : ndarray of matplotlib.axes.Axes
+        Flat array of ``ndim ** 2`` axes (``np.array(fig.axes)``), not a
+        ``(ndim, ndim)`` grid., shape (3,)
     meta : dict
         Only returned when *return_meta* is *True*. Keys:
         ``'param'``, ``'model'``, ``'residual'``, ``'model_meta'``.
@@ -79,6 +93,38 @@ def plot_psf_fit_triptych(
         If none of *param*, *summary_median*, *summary* are provided,
         or if *data* contains no finite pixels.
     """
+    if fit is not None:
+        # Take the model geometry from the prepare_for_fitting dict so the
+        # plotted model is normalised exactly as the fitted one. Explicit
+        # arguments still win.
+        if psf_os is None:
+            psf_os = fit["psf_os"]
+        if oversamp is None:
+            oversamp = fit.get("oversamp")
+        if native_shape is None:
+            native_shape = fit.get("native_shape")
+        if psf_prepare_fraction == 1.0:
+            psf_prepare_fraction = fit["psf_prepare_fraction"]
+
+    if psf_os is None:
+        raise ValueError(
+            "psf_os is required (or pass fit=<prepare_for_fitting dict>)"
+        )
+    if oversamp is None:
+        raise ValueError(
+            "oversamp is required (or pass fit=<prepare_for_fitting dict>)"
+        )
+    if native_shape is None:
+        warnings.warn(
+            "native_shape is None, so the PSF model skips the native-shape "
+            "matching step used during fitting and the plotted model is "
+            "normalised differently from the fitted one - the residual panel "
+            "will show structure for a perfectly good fit. Pass the values "
+            "used for the fit, or fit=<prepare_for_fitting dict>.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+
     data = np.asarray(data, dtype=np.float64)
     if data.ndim != 2:
         raise ValueError("data must be a 2-D array")

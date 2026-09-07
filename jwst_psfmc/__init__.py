@@ -19,7 +19,8 @@ PSF manipulation
     psf_model, match_shape_center, inspect_psf_shift
 
 Covariance estimation
-    estimate_cov_kernel, prepare_covariance_terms,
+    estimate_cov_kernel, kernel_power_spectrum, whiten_image,
+    prepare_covariance_terms,
     SplitCosineBellWindow, get_source_mask, find_zero_squares
 
 MCMC fitting
@@ -34,7 +35,7 @@ Visualisation
     plot_psf_fit_triptych, plot_chains, plot_corner
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .psf import (
     shift_psf_fourier,
@@ -48,6 +49,8 @@ from .covariance import (
     SplitCosineBellWindow,
     distance_grid,
     estimate_cov_kernel,
+    kernel_power_spectrum,
+    whiten_image,
     prepare_covariance_terms,
     get_source_mask,
     find_zero_squares,
@@ -83,6 +86,8 @@ __all__ = [
     "SplitCosineBellWindow",
     "distance_grid",
     "estimate_cov_kernel",
+    "kernel_power_spectrum",
+    "whiten_image",
     "prepare_covariance_terms",
     "get_source_mask",
     "find_zero_squares",

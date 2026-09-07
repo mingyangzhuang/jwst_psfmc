@@ -31,7 +31,15 @@ def shift_psf_fourier(psf: np.ndarray, dx: float, dy: float) -> np.ndarray:
     Returns
     -------
     shifted : ndarray of shape (ny, nx), float64
-        The shifted PSF, normalised so its sum equals that of the input.
+        The shifted PSF. No normalisation is applied; the sum is preserved
+        because the phase ramp leaves the zero-frequency term untouched.
+
+    Notes
+    -----
+    The shift is **circular**: flux pushed past one edge re-enters on the
+    opposite edge. Keep the source well inside the array, or pad it, if that
+    matters. Band-limited interpolation of a truncated PSF also produces small
+    negative ringing, so the output is not guaranteed non-negative.
     """
     psf = np.asarray(psf, dtype=np.float64)
     psf_ft = np.fft.fftn(psf)
@@ -42,10 +50,16 @@ def shift_psf_fourier(psf: np.ndarray, dx: float, dy: float) -> np.ndarray:
 def downsample_psf(psf_os: np.ndarray, oversamp: int, recenter_peak: bool = False) -> np.ndarray:
     """Downsample an oversampled PSF to native resolution by block-summing.
 
-    The function symmetrically centre-crops the oversampled PSF to the largest
-    even multiple of *oversamp* in each axis, then reshapes and sums each
-    (oversamp × oversamp) super-pixel. A final crop enforces an odd native size
-    so the discrete peak has a unique central pixel.
+    The function centre-crops the oversampled PSF to the largest multiple of
+    *oversamp* in each axis, then reshapes and sums each (oversamp × oversamp)
+    super-pixel. A final crop enforces an odd native size so the discrete peak
+    has a unique central pixel.
+
+    Both crops drop the trailing row/column when the amount to remove is odd,
+    so they are not exactly symmetric, and **flux outside the retained region
+    is discarded without being reported**. Supplying a *psf_os* whose shape is
+    an exact odd multiple of *oversamp* avoids both effects; this is what
+    :func:`prepare_psf_for_oversamp` produces for an odd ``native_shape``.
 
     Parameters
     ----------
@@ -209,7 +223,12 @@ def prepare_psf_for_oversamp(
     psf_crop : ndarray of shape (ny_os_crop, nx_os_crop), float64
         Cropped oversampled PSF, ready to pass to :func:`psf_model`.
     out_native_shape : (ny, nx)
-        Corresponding native-resolution shape (always odd in both axes).
+        Native output shape. When *native_shape* is given it is echoed back
+        unchanged, so it is odd only if the caller supplied an odd shape;
+        an even value is passed through and then silently reduced by the
+        odd-size crop inside :func:`downsample_psf`, which biases the
+        encircled-energy bookkeeping. Prefer odd values. When
+        *native_shape* is None the computed shape is always odd.
     fraction : float
         Encircled-energy fraction. Only returned when *return_fraction* is
         *True*.
