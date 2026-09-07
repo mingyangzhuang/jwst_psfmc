@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-## [0.1.0] – 2025-06-25
+## [0.1.0] – 2026-09-07
 
 ### Added
 - `jwst_psfmc.psf`: Fourier-space PSF shifting (`shift_psf_fourier`),
@@ -30,17 +30,22 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   multiprocessing pool (`run_mcmc`), posterior summarisation (`summarize_emcee`,
   `summarize_flux_from_chain`).
 - `jwst_psfmc.io`: compressed `.npz` save/load (`save_emcee_results`,
-  `load_emcee_results`), `importlib.resources`-based bundled data path helpers
-  .
+  `load_emcee_results`).
 - `jwst_psfmc.plot`: data / model / residual triptych (`plot_psf_fit_triptych`),
   walker chain traces (`plot_chains`), `corner.py` wrapper (`plot_corner`).
-- Bundled example data: JWST NEXUS F200W cutouts for source 43, epochs
-  deep_ep02 (non-detection) and deep_ep03 (detection), plus 4× oversampled
-  PSF models for each epoch.
+- Example data in the repository's `examples/` directory (not shipped in the
+  installed package): JWST NEXUS F200W cutouts for source 43, epochs
+  deep_ep02 (non-detection) and deep_ep03 (detection), a F444W example for the
+  covariance demo, plus 4× oversampled PSF models. Clone the repository to run
+  the notebooks.
 - `examples/demo_psf_photometry.ipynb`: end-to-end demonstration notebook
   covering covariance estimation, MCMC for a non-detection (3-σ upper limit)
   and a detection, chain diagnostics, corner plots, and result I/O.
+- `examples/demo_covariance_kernel.ipynb`: covariance kernel pipeline from
+  source masking through windowing, power spectrum, and noise whitening.
 - GitHub Actions CI workflow (Python 3.10 and 3.11).
+- Release workflow publishing to PyPI via Trusted Publishing (OIDC), with a
+  TestPyPI dry-run target; see `RELEASING.md`.
 - Full NumPy-style docstrings on all public functions.
 
 [Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.1.0...HEAD
