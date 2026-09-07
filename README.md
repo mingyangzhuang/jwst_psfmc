@@ -38,6 +38,18 @@ ignored in a standard χ² PSF fit, the flux uncertainties are systematically *u
 The PSF is shifted with **exact Fourier-space interpolation** (no interpolation kernel
 artefacts) and downsampled from the 4× oversampled PSF model by block-summing.
 
+![Pixel-correlation whitening](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/whitening.png)
+
+*Correlated noise, measured and removed. Left to right: a source-free F444W sky
+patch, its autocorrelation, and the radial profile of that autocorrelation —
+before (top) and after (bottom) dividing the Fourier amplitudes by the square
+root of the kernel power spectrum. The nearest-neighbour correlation collapses
+from **0.609 to 0.031**, while the noise level is essentially untouched
+(3σ-clipped RMS 0.0111 → 0.0108; the unclipped variance is conserved exactly,
+since the kernel spectrum has unit mean). Removing the correlation without
+removing the noise is the whole point. Produced by
+[`examples/demo_covariance_kernel.ipynb`](examples/demo_covariance_kernel.ipynb).*
+
 ---
 
 ## Installation
@@ -138,6 +150,15 @@ res = jpm.load_emcee_results("example2_f200w_mcmc.npz")
 print(res["summary"])
 ```
 
+![Data, model and residual for a detection](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/detection_triptych.png)
+
+*Data, best-fit model and residual for a detected transient — AT 2025amoq,
+F200W, 9×9 px stamp. A residual flat at the noise level is the sign of a good
+fit; coherent structure there points to a centroid or PSF mismatch rather than
+a bad flux.*
+
+---
+
 ### Deriving a flux upper limit from a non-detection
 
 Residual small-scale background fluctuations can mimic low-level source
@@ -201,6 +222,14 @@ print(f"3-sigma upper limit (99.7th percentile): {ul_percentile:.4f}")
 print(f"3-sigma upper limit (median + 3*sigma):  {ul_3sigma:.4f}")
 ```
 
+![Broad and tight flux posteriors with both 3-sigma upper limits](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/upper_limit_posteriors.png)
+
+*The two-run upper-limit workflow, for the epoch where AT 2025amoq is absent.
+Broad priors (blue) confirm the source is genuinely not there; tightening the
+centroid priors to ±0.1 px (orange) narrows the posterior tail and sets the
+bound. Both 3σ conventions are drawn — they agree closely here, which is itself
+the check that the posterior is near-Gaussian.*
+
 ---
 
 ## Full Worked Examples
@@ -222,7 +251,7 @@ JWST difference image (F444W example):
   (`kernel_power_spectrum`)
 - Whitening the sky patch (`whiten_image`) and confirming what it does: because
   the kernel spectrum has unit mean, the RMS is preserved (ratio 1.0002), while
-  the nearest-neighbour pixel correlation falls from 0.61 to 0.03
+  the nearest-neighbour pixel correlation falls from 0.609 to 0.031
 
 ### PSF photometry with MCMC
 
