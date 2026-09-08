@@ -10,6 +10,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Changed
+- The README Quick Start is now two explicitly numbered demos, mirroring the two
+  notebooks: **Demo 1** estimates the covariance kernel from a source-free
+  region (`get_source_mask`, `find_zero_squares`, `estimate_cov_kernel`,
+  `kernel_power_spectrum`, `whiten_image`) and **Demo 2** fits a source with
+  it. Previously the Quick Start loaded a pre-computed kernel and never showed
+  how one is made, which is the first notebook's whole subject. The upper-limit
+  section now nests under Demo 2, and the non-detection snippet defines its own
+  `cy`/`cx` so each block runs standalone.
 - Jupyter is available as an optional `notebooks` extra
   (`pip install "jwst-psfmc[notebooks]"`) for running the demo notebooks. It is
   deliberately not a runtime dependency: the library never imports Jupyter or

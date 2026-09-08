@@ -103,7 +103,61 @@ jupyter notebook demo_psf_photometry.ipynb
 
 ## Quick Start
 
-The core API accepts NumPy arrays directly — load your own FITS files however you prefer:
+There are **two demos**, mirroring the two notebooks in `examples/`: first
+measure the covariance kernel from the image itself, then fit a source with it.
+The API takes NumPy arrays throughout — load your FITS files however you prefer.
+
+### Demo 1 — Estimating the covariance kernel
+
+The kernel is measured from a source-free region of the same difference image,
+so it describes the noise the source is actually sitting in.
+
+```python
+from astropy.io import fits
+from astropy.stats import sigma_clipped_stats
+import numpy as np
+import jwst_psfmc as jpm
+
+# ── 1. Load a difference image and mask its sources ────────────────────────
+diff = fits.getdata("examples/data/example3_f444w_diff.fits").astype(float)
+mask = jpm.get_source_mask(diff)          # or load a mask you already have
+
+# ── 2. Find the largest source-free square ─────────────────────────────────
+squares = jpm.find_zero_squares(mask.astype(np.int64), a=60,
+                                all_sizes=True, max_nonzero=5)
+order = np.lexsort((squares[:, 1], squares[:, 0], -squares[:, 2]))
+top, left, size = squares[order[0]].astype(int)
+patch = diff[top:top + size, left:left + size].copy()
+
+# Replace any NaN with noise at the local level, then remove the offset
+bad = ~np.isfinite(patch)
+if bad.any():
+    mean, _, std = sigma_clipped_stats(patch[~bad], sigma=3)
+    patch[bad] = np.random.default_rng(42).standard_normal(bad.sum()) * std + mean
+patch -= sigma_clipped_stats(patch, sigma=3)[0]
+
+# ── 3. Estimate the kernel and its power spectrum ──────────────────────────
+cov_kernel = jpm.estimate_cov_kernel(patch, size=15)
+power_spectrum = jpm.kernel_power_spectrum(cov_kernel, patch.shape)
+
+# ── 4. Check it: whitening should remove the correlation, not the noise ────
+white = jpm.whiten_image(patch, power_spectrum=power_spectrum)
+before = jpm.estimate_cov_kernel(patch, size=15)
+after = jpm.estimate_cov_kernel(white, size=15)
+c = before.shape[0] // 2
+print(f"nearest-neighbour correlation: {before[c, c+1]:.3f} -> {after[c, c+1]:.3f}")
+print(f"RMS ratio (whitened / original): {white.std() / patch.std():.4f}")
+
+fits.writeto("example3_f444w_cov_kernel.fits", cov_kernel, overwrite=True)
+```
+
+On the bundled F444W example this prints a nearest-neighbour correlation
+falling from **0.614 to 0.015** at an RMS ratio of **0.9982** — the
+correlation removed, the noise level intact. That is the check that the kernel
+describes this image; see the figure in
+[Scientific Background](#scientific-background) for the same result in pictures.
+
+### Demo 2 — PSF photometry with MCMC
 
 ```python
 from astropy.io import fits
@@ -113,7 +167,7 @@ import jwst_psfmc as jpm
 # ── 1. Load your data ──────────────────────────────────────────────────────
 data    = fits.getdata("examples/data/example2_f200w_diff.fits")
 err     = fits.getdata("examples/data/example2_f200w_diff_error.fits")
-kernel  = fits.getdata("examples/data/example2_f200w_cov_kernel.fits")
+kernel  = fits.getdata("examples/data/example2_f200w_cov_kernel.fits")  # from demo 1
 psf_raw = fits.getdata("examples/PSF/example2_f200w_PSF_4_c.fits")
 
 # ── 2. Extract a 9×9 stamp centred on the source ───────────────────────────
@@ -165,7 +219,7 @@ a bad flux.*
 
 ---
 
-### Deriving a flux upper limit from a non-detection
+#### Deriving a flux upper limit from a non-detection
 
 Residual small-scale background fluctuations can mimic low-level source
 emission at 1–2σ. We use a **two-run workflow**:
@@ -191,6 +245,7 @@ err_nd    = fits.getdata("examples/data/example1_f200w_diff_error.fits")
 kernel_nd = fits.getdata("examples/data/example1_f200w_cov_kernel.fits")
 psf_nd    = fits.getdata("examples/PSF/example1_f200w_PSF_4_c.fits")
 
+cy, cx = data_nd.shape[0] // 2, data_nd.shape[1] // 2
 stamp_nd     = data_nd[cy-4:cy+5, cx-4:cx+5]
 stamp_err_nd = err_nd[cy-4:cy+5, cx-4:cx+5]
 
@@ -237,10 +292,11 @@ bound. Both 3σ conventions are drawn; they differ by ~6 % here.*
 
 ## Full Worked Examples
 
-Both notebooks run end to end against the bundled example data. Clone the
-repository to use them — the FITS files live in `examples/` and are not shipped
-inside the installed package — and install the `notebooks` extra for Jupyter
-itself: `pip install "jwst-psfmc[notebooks]"`.
+There are **two notebooks**, one per demo above, and both run end to end
+against the bundled example data. Clone the repository to use them — the FITS
+files live in `examples/` and are not shipped inside the installed package —
+and install the `notebooks` extra for Jupyter itself:
+`pip install "jwst-psfmc[notebooks]"`.
 
 ### Covariance kernel estimation
 
