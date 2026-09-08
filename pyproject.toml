@@ -40,6 +40,7 @@ dependencies = [
     "emcee>=3.1",
     "corner>=2.2",
     "matplotlib>=3.6",
+    "tqdm>=4.60",
 ]
 
 [project.optional-dependencies]

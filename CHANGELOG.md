@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+- Added `tqdm` to the runtime dependencies. `run_mcmc` defaults to
+  `progress=True`, but `emcee` does not declare `tqdm` itself, so a clean
+  `pip install jwst-psfmc` produced no progress bar at all: emcee falls back to
+  a `_NoOpPBar` and only logs "You must install the tqdm library to use
+  progress indicators with emcee" to stderr. On runs that take hours the
+  absence of a bar is easy to misread as a hung process.
+
 ## [0.2.0] – 2026-09-07
 
 ### Added

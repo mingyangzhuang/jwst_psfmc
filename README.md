@@ -66,7 +66,7 @@ cd jwst_psfmc
 pip install -e ".[dev]"
 ```
 
-**Dependencies:** `numpy`, `scipy`, `astropy`, `photutils`, `emcee`, `corner`, `matplotlib`
+**Dependencies:** `numpy`, `scipy`, `astropy`, `photutils`, `emcee`, `corner`, `matplotlib`, `tqdm`
 
 ---
 
