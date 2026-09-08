@@ -1,5 +1,5 @@
 """
-MCMC fitting machinery for PSF photometry on JWST difference images.
+MCMC fitting machinery for PSF photometry on JWST drizzled images.
 
 Fitted parameters (in order):
     0  flux         – total source flux (image units, e.g. MJy sr⁻¹)

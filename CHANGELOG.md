@@ -9,6 +9,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.2.3] – 2026-09-08
+
+### Changed
+- `examples/demo_covariance_kernel.ipynb` reports the whitening RMS to three
+  decimals rather than four, so both panels read 0.011 and the point that
+  whitening leaves the noise level alone is visible at a glance. The README
+  figure and caption are regenerated to match.
+- Generalised the package summary from "drizzled difference images" to
+  "drizzled images", matching the README tagline: the correlated-noise
+  likelihood applies to any drizzled image, not only differences. This is the
+  one-line description shown under the package name on PyPI, so it only
+  refreshes on a release. The `jwst_psfmc` and `jwst_psfmc.mcmc` module
+  docstrings were generalised to match; mentions of difference images that
+  describe the actual workflow were left alone.
+
 ## [0.2.2] – 2026-09-08
 
 ### Fixed
@@ -264,7 +279,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   TestPyPI dry-run target; see `RELEASING.md`.
 - Full NumPy-style docstrings on all public functions.
 
-[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.3
 [0.2.2]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.2
 [0.2.1]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.1
 [0.2.0]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.0

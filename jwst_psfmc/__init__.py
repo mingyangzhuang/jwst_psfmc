@@ -2,7 +2,7 @@
 jwst_psfmc
 ==========
 
-PSF photometry with MCMC for JWST (and HST) drizzled difference images.
+PSF photometry with MCMC for JWST (and HST) drizzled images.
 
 Accounts for correlated pixel noise introduced by the drizzle algorithm via
 a Fourier-space covariance likelihood. The four fitted parameters are:
@@ -35,7 +35,7 @@ Visualisation
     plot_psf_fit_triptych, plot_chains, plot_corner
 """
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 from .psf import (
     shift_psf_fourier,

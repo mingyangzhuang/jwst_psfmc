@@ -44,9 +44,9 @@ artefacts) and downsampled from the 4× oversampled PSF model by block-summing.
 patch, its autocorrelation, and the radial profile of that autocorrelation —
 before (top) and after (bottom) dividing the Fourier amplitudes by the square
 root of the kernel power spectrum. The nearest-neighbour correlation collapses
-from **0.611 to 0.038**, while the noise level is essentially untouched
-(3σ-clipped RMS 0.0111 → 0.0108; the unclipped variance is conserved exactly,
-since the kernel spectrum has unit mean). Removing the correlation without
+from **0.611 to 0.038**, while the noise level is untouched — both panels read
+a 3σ-clipped RMS of 0.011, and the unclipped variance is conserved exactly
+since the kernel spectrum has unit mean. Removing the correlation without
 removing the noise is the whole point. Produced by
 [`examples/demo_covariance_kernel.ipynb`](examples/demo_covariance_kernel.ipynb).*
 
