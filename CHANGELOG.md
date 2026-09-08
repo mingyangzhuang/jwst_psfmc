@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.2.2] – 2026-09-08
+
 ### Fixed
 - `examples/demo_covariance_kernel.ipynb` chose its sky patch with `argsort` on
   square size. 56 squares tie at the largest size and numpy's default quicksort
@@ -262,7 +264,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   TestPyPI dry-run target; see `RELEASING.md`.
 - Full NumPy-style docstrings on all public functions.
 
-[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.2
 [0.2.1]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.1
 [0.2.0]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.0
 [0.1.0]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.1.0
