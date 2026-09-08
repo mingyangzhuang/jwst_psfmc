@@ -169,19 +169,15 @@ emission at 1–2σ. We use a **two-run workflow**:
 2. **Upper limit** — tight priors (±0.1 pix) to derive the 3σ bound from
    the posterior flux distribution.
 
-Two conventions for the 3σ bound are supported, and they answer slightly
-different questions:
+Two conventions for the 3σ bound are supported:
 
-| Convention | Definition | When to prefer it |
-|---|---|---|
-| **99.7th percentile** | The flux below which 99.7 % of the posterior samples fall | Makes no assumption about the shape of the posterior. Correct when the flux posterior is skewed or truncated (e.g. by a non-negative flux prior). |
-| **3 × σ** | `median + 3 × std` of the posterior | Matches the convention most transient and SN-rate papers quote, so it is the comparable number when placing limits alongside published work. |
+| Convention | Definition |
+|---|---|
+| **99.7th percentile** | The flux below which 99.7 % of the posterior samples fall. Assumes nothing about the shape of the posterior. |
+| **max(median, 0) + 3 × σ** | Gaussian-equivalent form. The median is clamped at zero so a downward noise fluctuation cannot produce a limit deeper than the noise allows. |
 
-For a clean non-detection with a flux prior spanning negative values the
-posterior is near-Gaussian and centred on zero, so the two agree closely;
-their divergence is itself a useful diagnostic that the posterior is
-non-Gaussian and that the percentile should be trusted. Whichever you adopt,
-state it explicitly when publishing — the two are not interchangeable.
+They agree for a near-Gaussian posterior; where they diverge, trust the
+percentile. State which one you used.
 
 ```python
 data_nd   = fits.getdata("examples/data/example1_f200w_diff.fits")
@@ -215,11 +211,13 @@ flat_flux = sampler_nd_tight.get_chain(discard=500, thin=4, flat=True)[:, 0]
 # Convention A — posterior quantile (distribution-free)
 ul_percentile = float(np.percentile(flat_flux, 99.7))
 
-# Convention B — Gaussian-equivalent, median + 3 x sigma
-ul_3sigma = float(np.median(flat_flux) + 3.0 * np.std(flat_flux, ddof=1))
+# Convention B — Gaussian-equivalent; median clamped at zero.
+flux_median = float(np.median(flat_flux))
+flux_sigma = float(np.std(flat_flux, ddof=1))
+ul_3sigma = max(flux_median, 0.0) + 3.0 * flux_sigma
 
-print(f"3-sigma upper limit (99.7th percentile): {ul_percentile:.4f}")
-print(f"3-sigma upper limit (median + 3*sigma):  {ul_3sigma:.4f}")
+print(f"3-sigma upper limit (99.7th percentile):     {ul_percentile:.4f}")
+print(f"3-sigma upper limit (max(median,0) + 3sigma): {ul_3sigma:.4f}")
 ```
 
 ![Broad and tight flux posteriors with both 3-sigma upper limits](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/upper_limit_posteriors.png)

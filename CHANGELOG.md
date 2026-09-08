@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+- The recommended Gaussian-equivalent 3σ upper limit is now
+  `max(median, 0) + 3σ` rather than `median + 3σ`. Unclamped, it is
+  anti-conservative when the posterior median comes out negative — routine for
+  a non-detection on a downward noise fluctuation — and would claim a limit
+  deeper than the noise allows. The notebook reports the unclamped value when
+  the clamp engages.
+
 ## [0.2.1] – 2026-09-08
 
 ### Fixed
