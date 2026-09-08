@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jwst-psfmc"
-version = "0.2.0"
+version = "0.2.1"
 description = "PSF photometry with MCMC for JWST (and HST) drizzled difference images, with correlated-noise likelihood"
 readme = "README.md"
 license = { text = "MIT" }

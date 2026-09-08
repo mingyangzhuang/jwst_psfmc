@@ -35,7 +35,7 @@ Visualisation
     plot_psf_fit_triptych, plot_chains, plot_corner
 """
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 from .psf import (
     shift_psf_fourier,

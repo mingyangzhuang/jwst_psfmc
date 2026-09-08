@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.2.1] – 2026-09-08
+
 ### Fixed
 - Added `tqdm` to the runtime dependencies. `run_mcmc` defaults to
   `progress=True`, but `emcee` does not declare `tqdm` itself, so a clean
@@ -16,6 +18,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   a `_NoOpPBar` and only logs "You must install the tqdm library to use
   progress indicators with emcee" to stderr. On runs that take hours the
   absence of a bar is easy to misread as a hung process.
+- `tests/test_covariance.py` selected its sky patch with `argsort` on square
+  size, but 56 squares tie at the largest size and numpy's default quicksort is
+  unstable, so the chosen corner varied by build — (242, 112) under quicksort,
+  (215, 111) under heapsort. The candidates give whitened/original RMS ratios
+  spanning 0.9958 to 1.0016, which failed CI on Python 3.10 against a `rel=1e-3`
+  assertion. The tie is now broken explicitly with `lexsort`, and the tolerance
+  reflects kernel-versus-patch modelling rather than machine noise.
+
+### Changed
+- Three figures from the demo notebooks are now shown in the README (whitening,
+  a detection triptych, and the two-run upper-limit posteriors). They are
+  referenced by absolute URLs, since the README is also the PyPI long
+  description and repository-relative paths do not resolve there.
+- README badge cache window shortened from 3600 s to 300 s: GitHub's Camo proxy
+  had cached the v0.1.0 badge and kept serving it after 0.2.0 was published.
 
 ## [0.2.0] – 2026-09-07
 
@@ -213,6 +230,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   TestPyPI dry-run target; see `RELEASING.md`.
 - Full NumPy-style docstrings on all public functions.
 
-[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.1
 [0.2.0]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.0
 [0.1.0]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.1.0
