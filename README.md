@@ -118,26 +118,29 @@ from astropy.stats import sigma_clipped_stats
 import numpy as np
 import jwst_psfmc as jpm
 
-# ── 1. Load a difference image and mask its sources ────────────────────────
+# ── 1. Load a difference image and a source mask ───────────────────────────
+# Build the mask with jpm.get_source_mask() on the reference AND science
+# images *before* subtraction — a well-subtracted source leaves no residual
+# to detect, so masking the difference image alone under-masks badly.
 diff = fits.getdata("examples/data/example3_f444w_diff.fits").astype(float)
-mask = jpm.get_source_mask(diff)          # or load a mask you already have
+mask = fits.getdata("examples/data/example3_f444w_mask.fits").astype(bool)
 
 # ── 2. Find the largest source-free square ─────────────────────────────────
 squares = jpm.find_zero_squares(mask.astype(np.int64), a=60,
                                 all_sizes=True, max_nonzero=5)
-order = np.lexsort((squares[:, 1], squares[:, 0], -squares[:, 2]))
-top, left, size = squares[order[0]].astype(int)
+squares = squares[np.argsort(squares[:, 2])]
+top, left, size = squares[-1].astype(int)
 patch = diff[top:top + size, left:left + size].copy()
 
 # Replace any NaN with noise at the local level, then remove the offset
-bad = ~np.isfinite(patch)
-if bad.any():
-    mean, _, std = sigma_clipped_stats(patch[~bad], sigma=3)
-    patch[bad] = np.random.default_rng(42).standard_normal(bad.sum()) * std + mean
-patch -= sigma_clipped_stats(patch, sigma=3)[0]
+nan_mask = ~np.isfinite(patch)
+if nan_mask.any():
+    mean, _, std = sigma_clipped_stats(patch[np.isfinite(patch)], sigma=3)
+    patch[nan_mask] = np.random.RandomState(42).randn(nan_mask.sum()) * std + mean
+    patch = patch - mean
 
 # ── 3. Estimate the kernel and its power spectrum ──────────────────────────
-cov_kernel = jpm.estimate_cov_kernel(patch, size=15)
+cov_kernel = jpm.estimate_cov_kernel(patch, size=125)
 power_spectrum = jpm.kernel_power_spectrum(cov_kernel, patch.shape)
 
 # ── 4. Check it: whitening should remove the correlation, not the noise ────
@@ -152,9 +155,9 @@ fits.writeto("example3_f444w_cov_kernel.fits", cov_kernel, overwrite=True)
 ```
 
 On the bundled F444W example this prints a nearest-neighbour correlation
-falling from **0.614 to 0.015** at an RMS ratio of **0.9982** — the
-correlation removed, the noise level intact. That is the check that the kernel
-describes this image; see the figure in
+falling from **0.609 to 0.031** at an RMS ratio of **1.0002** — the correlation
+removed, the noise level intact. That is the check that the kernel describes
+this image; see the figure in
 [Scientific Background](#scientific-background) for the same result in pictures.
 
 ### Demo 2 — PSF photometry with MCMC
