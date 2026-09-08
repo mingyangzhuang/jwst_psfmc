@@ -44,7 +44,7 @@ artefacts) and downsampled from the 4× oversampled PSF model by block-summing.
 patch, its autocorrelation, and the radial profile of that autocorrelation —
 before (top) and after (bottom) dividing the Fourier amplitudes by the square
 root of the kernel power spectrum. The nearest-neighbour correlation collapses
-from **0.609 to 0.031**, while the noise level is essentially untouched
+from **0.611 to 0.038**, while the noise level is essentially untouched
 (3σ-clipped RMS 0.0111 → 0.0108; the unclipped variance is conserved exactly,
 since the kernel spectrum has unit mean). Removing the correlation without
 removing the noise is the whole point. Produced by
@@ -128,8 +128,10 @@ mask = fits.getdata("examples/data/example3_f444w_mask.fits").astype(bool)
 # ── 2. Find the largest source-free square ─────────────────────────────────
 squares = jpm.find_zero_squares(mask.astype(np.int64), a=60,
                                 all_sizes=True, max_nonzero=5)
-squares = squares[np.argsort(squares[:, 2])]
-top, left, size = squares[-1].astype(int)
+# Many squares tie at the largest size, so break the tie explicitly rather
+# than relying on argsort's unstable quicksort.
+order = np.lexsort((squares[:, 1], squares[:, 0], -squares[:, 2]))
+top, left, size = squares[order[0]].astype(int)
 patch = diff[top:top + size, left:left + size].copy()
 
 # Replace any NaN with noise at the local level, then remove the offset
@@ -155,7 +157,7 @@ fits.writeto("example3_f444w_cov_kernel.fits", cov_kernel, overwrite=True)
 ```
 
 On the bundled F444W example this prints a nearest-neighbour correlation
-falling from **0.609 to 0.031** at an RMS ratio of **1.0002** — the correlation
+falling from **0.611 to 0.038** at an RMS ratio of **0.9981** — the correlation
 removed, the noise level intact. That is the check that the kernel describes
 this image; see the figure in
 [Scientific Background](#scientific-background) for the same result in pictures.
@@ -313,8 +315,8 @@ JWST difference image (F444W example):
 - Cosine-bell windowing (`SplitCosineBellWindow`) and the Fourier power spectrum
   (`kernel_power_spectrum`)
 - Whitening the sky patch (`whiten_image`) and confirming what it does: because
-  the kernel spectrum has unit mean, the RMS is preserved (ratio 1.0002), while
-  the nearest-neighbour pixel correlation falls from 0.609 to 0.031
+  the kernel spectrum has unit mean, the RMS is preserved (ratio 0.9981), while
+  the nearest-neighbour pixel correlation falls from 0.611 to 0.038
 
 ### PSF photometry with MCMC
 

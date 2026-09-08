@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+- `examples/demo_covariance_kernel.ipynb` chose its sky patch with `argsort` on
+  square size. 56 squares tie at the largest size and numpy's default quicksort
+  is unstable, so the patch — and every number derived from it — depended on the
+  numpy build. The tie is now broken explicitly with `lexsort`, matching the
+  test suite and the README, and all three report 0.611 → 0.038 at an RMS ratio
+  of 0.9981.
+
 ### Changed
 - The README Quick Start is now two explicitly numbered demos, mirroring the two
   notebooks: **Demo 1** estimates the covariance kernel from a source-free
