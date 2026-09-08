@@ -198,7 +198,7 @@ def plot_psf_fit_triptych(
         ),
         ha="center", va="bottom",
         transform=axes[1].transAxes,
-        fontsize=11,
+        fontsize=12.5,
         bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.7),
     )
 

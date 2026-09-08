@@ -30,3 +30,6 @@ htmlcov/
 
 # macOS
 .DS_Store
+
+# MCMC result archives written by the demo notebooks (regenerated on every run)
+examples/*.npz
