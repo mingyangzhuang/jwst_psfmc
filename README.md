@@ -225,8 +225,7 @@ print(f"3-sigma upper limit (max(median,0) + 3sigma): {ul_3sigma:.4f}")
 *The two-run upper-limit workflow, for the epoch where AT 2025amoq is absent.
 Broad priors (blue) confirm the source is genuinely not there; tightening the
 centroid priors to ±0.1 px (orange) narrows the posterior tail and sets the
-bound. Both 3σ conventions are drawn — they agree closely here, which is itself
-the check that the posterior is near-Gaussian.*
+bound. Both 3σ conventions are drawn; they differ by ~6 % here.*
 
 ---
 
