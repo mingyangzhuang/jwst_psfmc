@@ -157,3 +157,23 @@ class TestPostFitNormalisation:
         summary = summarize_emcee(det_sampler, burnin=100, thin=4)
         with pytest.raises(ValueError, match="psf_os is required"):
             plot_psf_fit_triptych(data, err, summary=summary)
+
+    def test_triptych_annotation_uses_mathtext_for_negatives(self, det_fit):
+        """Parameter values are wrapped in $...$ so a negative renders with a
+        true minus sign instead of a hyphen, and the mathtext must parse."""
+        from matplotlib import mathtext
+
+        fit, data, err = det_fit
+        param = np.array([12.345, -0.271, -0.038, -0.0042])
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")      # a mathtext parse problem raises
+            fig, axes = plot_psf_fit_triptych(data, err, param=param, fit=fit)
+            fig.canvas.draw()                   # forces the text to be laid out
+        text = [t.get_text() for a in axes for t in a.texts][0]
+        plt.close("all")
+
+        assert "$-0.271$" in text and "$-0.038$" in text
+        assert "$12.345$" in text
+        parser = mathtext.MathTextParser("agg")
+        for frag in ("$12.345$", "$-0.271$", "$-0.0042$"):
+            parser.parse(frag)

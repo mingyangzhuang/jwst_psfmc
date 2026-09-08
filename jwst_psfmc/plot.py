@@ -191,8 +191,10 @@ def plot_psf_fit_triptych(
     axes[1].text(
         0.5, 0.04,
         (
-            f"flux = {best_param[0]:.3f},  bkg = {best_param[3]:.3f}\n"
-            f"dx = {best_param[1]:.3f},  dy = {best_param[2]:.3f}"
+            # Values wrapped in mathtext so a negative number renders with a
+            # true minus sign rather than a hyphen.
+            f"flux = ${best_param[0]:.3f}$,  bkg = ${best_param[3]:.3f}$\n"
+            f"dx = ${best_param[1]:.3f}$,  dy = ${best_param[2]:.3f}$"
         ),
         ha="center", va="bottom",
         transform=axes[1].transAxes,

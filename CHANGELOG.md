@@ -10,6 +10,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Changed
+- `plot_psf_fit_triptych` wraps the fitted parameter values in mathtext, so a
+  negative value renders with a true minus sign instead of a hyphen.
 - The recommended Gaussian-equivalent 3σ upper limit is now
   `max(median, 0) + 3σ` rather than `median + 3σ`. Unclamped, it is
   anti-conservative when the posterior median comes out negative — routine for
