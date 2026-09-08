@@ -38,7 +38,7 @@ ignored in a standard χ² PSF fit, the flux uncertainties are systematically *u
 The PSF is shifted with **exact Fourier-space interpolation** (no interpolation kernel
 artefacts) and downsampled from the 4× oversampled PSF model by block-summing.
 
-![Pixel-correlation whitening](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/whitening.png)
+![Pixel-correlation whitening](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/whitening.png?v=0.2.3)
 
 *Correlated noise, measured and removed. Left to right: a source-free F444W sky
 patch, its autocorrelation, and the radial profile of that autocorrelation —
@@ -215,7 +215,7 @@ res = jpm.load_emcee_results("example2_f200w_mcmc.npz")
 print(res["summary"])
 ```
 
-![Data, model and residual for a detection](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/detection_triptych.png)
+![Data, model and residual for a detection](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/detection_triptych.png?v=0.2.3)
 
 *Data, best-fit model and residual for a detected transient — AT 2025amoq,
 F200W, 9×9 px stamp. A residual flat at the noise level is the sign of a good
@@ -286,7 +286,7 @@ print(f"3-sigma upper limit (99.7th percentile):     {ul_percentile:.4f}")
 print(f"3-sigma upper limit (max(median,0) + 3sigma): {ul_3sigma:.4f}")
 ```
 
-![Broad and tight flux posteriors with both 3-sigma upper limits](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/upper_limit_posteriors.png)
+![Broad and tight flux posteriors with both 3-sigma upper limits](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/upper_limit_posteriors.png?v=0.2.3)
 
 *The two-run upper-limit workflow, for the epoch where AT 2025amoq is absent.
 Broad priors (blue) confirm the source is genuinely not there; tightening the

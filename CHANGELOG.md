@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Fixed
+- The README figure URLs carry a `?v=` marker. GitHub's Camo proxy caches
+  README images by URL, so regenerating a figure at the same path left the old
+  image on display indefinitely — the cache is server-side, so a browser reload
+  does not clear it. Bump the marker whenever a figure is regenerated.
+
 ## [0.2.3] – 2026-09-08
 
 ### Changed
