@@ -10,6 +10,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Changed
+- Jupyter is available as an optional `notebooks` extra
+  (`pip install "jwst-psfmc[notebooks]"`) for running the demo notebooks. It is
+  deliberately not a runtime dependency: the library never imports Jupyter or
+  IPython, and requiring it would add 101 packages and ~240 MB to every
+  install, including script and pipeline users who never open a notebook.
 - `plot_psf_fit_triptych` wraps the fitted parameter values in mathtext, so a
   negative value renders with a true minus sign instead of a hyphen, and the
   annotation font is slightly larger (11 → 12.5).

@@ -66,6 +66,12 @@ cd jwst_psfmc
 pip install -e ".[dev]"
 ```
 
+To run the notebooks in `examples/`, add the `notebooks` extra:
+
+```bash
+pip install "jwst-psfmc[notebooks]"
+```
+
 **Dependencies:** `numpy`, `scipy`, `astropy`, `photutils`, `emcee`, `corner`, `matplotlib`, `tqdm`
 
 ---
@@ -233,7 +239,8 @@ bound. Both 3σ conventions are drawn; they differ by ~6 % here.*
 
 Both notebooks run end to end against the bundled example data. Clone the
 repository to use them — the FITS files live in `examples/` and are not shipped
-inside the installed package.
+inside the installed package — and install the `notebooks` extra for Jupyter
+itself: `pip install "jwst-psfmc[notebooks]"`.
 
 ### Covariance kernel estimation
 

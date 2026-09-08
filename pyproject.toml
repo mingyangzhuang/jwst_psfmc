@@ -44,6 +44,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Only needed to run the notebooks in examples/; the library itself never
+# imports Jupyter or IPython.
+notebooks = [
+    "jupyter>=1.0",
+]
 dev = [
     "pytest>=7",
     "pytest-cov",
