@@ -16,8 +16,8 @@ exhibit **spatially correlated pixel-to-pixel noise**: photons detected in a sin
 pixel are spread across several output pixels during co-addition.  If these correlations are
 ignored in a standard χ² PSF fit, the flux uncertainties are systematically *underestimated*.
   Even in full MCMC fitting with correlated-noise likelihoods, neglecting the covariance kernel
-  underestimates flux uncertainties by ~30% in F200W (Zhuang et al., *NEXUS: Transient Searches
-  and First Results from Year One Observations*, submitted).
+  underestimates flux uncertainties by ~30% in F200W ([Zhuang et al.
+  2026](https://arxiv.org/abs/2609.06985)).
 
 `jwst_psfmc` solves this by:
 
@@ -353,7 +353,9 @@ step-by-step notebook covering both regimes, using two epochs of the same source
 
 If you use `jwst_psfmc` in your research, please cite:
 
-> Zhuang et al. (arXiv:xxxxxx[]), *NEXUS: Transient Searches and First Results from Year One Observations*
+> Zhuang, M.-Y., Hu, L., Pierel, J. D. R., et al. 2026, *NEXUS: Transient
+> Searches and First Results from Year One Observations*,
+> [arXiv:2609.06985](https://arxiv.org/abs/2609.06985)
 
 ---
 

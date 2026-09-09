@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+- The paper reference is now the published preprint,
+  [arXiv:2609.06985](https://arxiv.org/abs/2609.06985), replacing the
+  "submitted" and `arXiv:xxxxxx` placeholders in the README and the
+  photometry notebook.
+
 ### Fixed
 - The README figure URLs carry a `?v=` marker. GitHub's Camo proxy caches
   README images by URL, so regenerating a figure at the same path left the old
