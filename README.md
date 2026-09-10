@@ -222,6 +222,22 @@ F200W, 9×9 px stamp. A residual flat at the noise level is the sign of a good
 fit; coherent structure there points to a centroid or PSF mismatch rather than
 a bad flux.*
 
+![Four-parameter posterior for the detection](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/detection_posterior.png?v=0.2.4)
+
+*The full four-parameter posterior for the same detection (`plot_corner`), from
+5000 steps with 24 walkers after a 500-step burn-in. Flux is 21.276 (+0.425 /
+-0.428), i.e. 49.7σ from zero with 100 % of the posterior mass above it, so no
+upper limit is needed. The centroid sits 0.32 px along -x and 0.44 px along +y
+from the stamp centre, and the background floats at -0.009 ± 0.005 — all well
+inside their ±1 px and ±0.1 prior bounds, which is what you want to see: a
+parameter piled up against a prior edge means the prior, not the data, is
+setting the answer.
+The 1D histograms are close to Gaussian and the 2D contours are nearly round,
+so the parameters are essentially independent here; only a mild flux–bkg
+anticorrelation is visible, the expected trade-off between source and pedestal.
+A skewed flux histogram or a strong flux–dx/dy tilt would instead say the
+sampler has not converged or the PSF is misregistered.*
+
 ---
 
 #### Deriving a flux upper limit from a non-detection
