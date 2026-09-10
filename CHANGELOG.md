@@ -9,6 +9,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+- README: the four-parameter corner plot for the detection example
+  (`docs/figures/detection_posterior.png`), alongside the existing triptych.
+
+### Changed
+- README: shortened the detection posterior caption to the points the figure
+  cannot make on its own — the flux and its significance, the flux-bkg
+  anticorrelation, and what a skewed histogram or a flux-dx/dy tilt would mean.
+  The run settings it previously repeated are visible in the code block above
+  it.
+
 ## [0.2.4] – 2026-09-09
 
 ### Changed
