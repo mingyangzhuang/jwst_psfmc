@@ -106,6 +106,38 @@ class TestRunMcmcRejectsTypos:
         assert det_sampler.get_chain().shape[-1] == 4
 
 
+def test_nautilus_end_to_end(det_fit, tmp_path):
+    pytest.importorskip("nautilus")
+    import jwst_psfmc as jpm
+
+    fit, _, _ = det_fit
+    result = run_mcmc(
+        **fit, sampler="nautilus", n_live=100, n_eff=100, ncores=1,
+        seed=7, progress=False,
+    )
+    path = tmp_path / "posterior.v1"
+    jpm.save_nautilus_results(path, result)
+    loaded = jpm.load_nautilus_results(path)
+    assert loaded["labels"] == ("flux", "dx", "dy", "bkg")
+    for key in ("samples", "log_w", "log_l"):
+        np.testing.assert_array_equal(loaded[key], result[key])
+    assert loaded["n_eff"] == result["n_eff"] >= 100
+    assert loaded["n_like"] == result["n_like"] >= len(loaded["samples"])
+    assert np.exp(loaded["log_w"]).sum() == pytest.approx(1)
+
+    flux = loaded["samples"][:, 0]
+    order = np.argsort(flux)
+    cdf = np.cumsum(np.exp(loaded["log_w"][order]))
+    summary = jpm.summarize_posterior(loaded)
+    assert summary["flux"]["median"] == flux[order][np.searchsorted(cdf, 0.5)]
+    fig, axes = jpm.plot_corner(loaded)
+    try:
+        assert axes.size == 16
+        assert axes[-1].get_xlabel() == "bkg"
+    finally:
+        plt.close(fig)
+
+
 class TestPostFitNormalisation:
     """The post-fit helpers defaulted to geometry that silently mis-normalises."""
 

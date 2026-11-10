@@ -261,8 +261,8 @@ def plot_chains(
 
 
 def plot_corner(
-    sampler: emcee.EnsembleSampler,
-    labels: tuple[str, ...] = ("flux", "dx", "dy", "bkg"),
+    sampler: emcee.EnsembleSampler | dict,
+    labels: tuple[str, ...] | None = None,
     burnin: int = 500,
     thin: int = 4,
     title: str = "",
@@ -272,14 +272,15 @@ def plot_corner(
 
     Parameters
     ----------
-    sampler : emcee.EnsembleSampler
-        Completed sampler.
+    sampler : emcee.EnsembleSampler or dict
+        Completed emcee sampler or a Nautilus result from fitting or loading.
     labels : tuple of str, optional
-        Parameter names. Default ``('flux', 'dx', 'dy', 'bkg')``.
+        Parameter names. Defaults to the result labels for Nautilus and
+        ``('flux', 'dx', 'dy', 'bkg')`` for emcee.
     burnin : int, optional
-        Burn-in steps to discard. Default ``500``.
+        emcee burn-in steps to discard. Default ``500``.
     thin : int, optional
-        Thinning factor. Default ``4``.
+        emcee thinning factor. Default ``4``.
     title : str, optional
         Figure title displayed via ``fig.suptitle``. Default ``''``.
     **corner_kwargs
@@ -290,7 +291,16 @@ def plot_corner(
     fig : matplotlib.figure.Figure
     axes : ndarray of matplotlib.axes.Axes
     """
-    flat = sampler.get_chain(discard=burnin, thin=thin, flat=True)
+    if isinstance(sampler, dict):
+        flat = sampler["samples"]
+        if labels is None:
+            labels = sampler["labels"]
+        corner_kwargs["weights"] = np.exp(sampler["log_w"])
+        corner_kwargs.setdefault("plot_datapoints", False)
+    else:
+        flat = sampler.get_chain(discard=burnin, thin=thin, flat=True)
+        if labels is None:
+            labels = ("flux", "dx", "dy", "bkg")
     corner_kwargs.setdefault("show_titles", True)
     corner_kwargs.setdefault("title_fmt", ".3f")
     corner_kwargs.setdefault("quantiles", [0.16, 0.5, 0.84])

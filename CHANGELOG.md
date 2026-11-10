@@ -9,7 +9,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.3.0] – 2026-11-10
+
 ### Added
+- Optional Nautilus backend for PSF fitting, with weighted posterior
+  summaries, corner plots, and compressed NumPy archives.
 - README: the four-parameter corner plot for the detection example
   (`docs/figures/detection_posterior.png`), alongside the existing triptych.
 
@@ -304,7 +308,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   TestPyPI dry-run target; see `RELEASING.md`.
 - Full NumPy-style docstrings on all public functions.
 
-[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.4
 [0.2.3]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.3
 [0.2.2]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.2

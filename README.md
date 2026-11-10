@@ -303,6 +303,50 @@ bound. Both 3σ conventions are drawn; they differ by ~6 % here.*
 
 ---
 
+## Optional Nautilus sampler
+
+Install version 0.3.0 or later with `pip install "jwst-psfmc[nautilus]>=0.3.0"`
+from PyPI, or use `pip install -e ".[nautilus]"` from a source checkout.
+The fitting inputs, uniform prior bounds, and Fourier-space likelihood are
+shared with the default emcee backend.
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+result = jpm.run_mcmc(**fit_args, sampler="nautilus", seed=42)
+summary = jpm.summarize_posterior(result)
+fig_corner, _ = jpm.plot_corner(result)
+
+jpm.save_nautilus_results("example2_f200w_nautilus.npz", result)
+result = jpm.load_nautilus_results("example2_f200w_nautilus.npz")
+
+flux = result["samples"][:, 0]
+weights = np.exp(result["log_w"])
+fig, ax = plt.subplots()
+ax.hist(flux, weights=weights, bins=30, density=True)
+ax.set(xlabel="Flux (image units)", ylabel="Posterior density")
+```
+
+Nautilus uses its own default for `n_live`, targets `n_eff=10_000` effective
+samples, and discards exploration samples. It uses one worker by default.
+Set `ncores=4` to run four worker processes, including in a notebook.
+`nsteps`, `burnin`, and `thin` apply to the emcee workflow.
+
+For the non-detection example, run Nautilus with `**fit_nd_tight` to reuse
+the tight position priors. Compute the 99.7% posterior upper limit with the
+original weights, and check that the result is stable across seeds and
+larger values of `n_live` and `n_eff`.
+
+```python
+result_nd = jpm.run_mcmc(**fit_nd_tight, sampler="nautilus", seed=42)
+flux_nd = result_nd["samples"][:, 0]
+order = np.argsort(flux_nd)
+cumulative_weight = np.cumsum(np.exp(result_nd["log_w"][order]))
+index = np.searchsorted(cumulative_weight, 0.997 * cumulative_weight[-1])
+upper_limit = flux_nd[order[index]]
+```
+
 ## Full Worked Examples
 
 There are **two notebooks**, one per demo above, and both run end to end

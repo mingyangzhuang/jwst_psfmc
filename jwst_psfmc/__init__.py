@@ -26,16 +26,17 @@ Covariance estimation
 MCMC fitting
     prepare_for_fitting, run_mcmc,
     log_prior, log_likelihood_cov_prepared, log_prob_prepared,
-    summarize_emcee, summarize_flux_from_chain
+    summarize_emcee, summarize_posterior, summarize_flux_from_chain
 
 I/O
     save_emcee_results, load_emcee_results
+    save_nautilus_results, load_nautilus_results
 
 Visualisation
     plot_psf_fit_triptych, plot_chains, plot_corner
 """
 
-__version__ = "0.2.4"
+__version__ = "0.3.0"
 
 from .psf import (
     shift_psf_fourier,
@@ -62,11 +63,14 @@ from .mcmc import (
     prepare_for_fitting,
     run_mcmc,
     summarize_emcee,
+    summarize_posterior,
     summarize_flux_from_chain,
 )
 from .io import (
     save_emcee_results,
     load_emcee_results,
+    save_nautilus_results,
+    load_nautilus_results,
 )
 from .plot import (
     plot_psf_fit_triptych,
@@ -98,10 +102,13 @@ __all__ = [
     "prepare_for_fitting",
     "run_mcmc",
     "summarize_emcee",
+    "summarize_posterior",
     "summarize_flux_from_chain",
     # io
     "save_emcee_results",
     "load_emcee_results",
+    "save_nautilus_results",
+    "load_nautilus_results",
     # plot
     "plot_psf_fit_triptych",
     "plot_chains",

@@ -20,6 +20,66 @@ import numpy as np
 import emcee
 
 
+def save_nautilus_results(path: str | Path, result: dict) -> None:
+    """Save a weighted Nautilus posterior as a compressed NumPy archive.
+
+    Parameters
+    ----------
+    path : str or Path
+        Destination. A ``.npz`` extension is appended if absent.
+    result : dict
+        Result returned by Nautilus fitting or by :func:`load_nautilus_results`.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    OSError
+        If the archive cannot be written.
+    """
+    np.savez_compressed(path, **result)
+
+
+def load_nautilus_results(path: str | Path) -> dict:
+    """Load a weighted posterior saved by :func:`save_nautilus_results`.
+
+    Parameters
+    ----------
+    path : str or Path
+        Path to the archive, with or without the ``.npz`` extension.
+
+    Returns
+    -------
+    result : dict
+        Parameter labels, samples, log posterior weights, log likelihoods,
+        effective sample size, and number of likelihood evaluations.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the archive cannot be found.
+    ValueError
+        If the archive lacks the Nautilus result fields.
+    """
+    fields = ("labels", "samples", "log_w", "log_l", "n_eff", "n_like")
+    with np.load(_npz_path(path), allow_pickle=False) as archive:
+        if not all(field in archive.files for field in fields):
+            raise ValueError("Archive is missing Nautilus result fields")
+        result = {field: archive[field] for field in fields}
+    result["labels"] = tuple(str(label) for label in result["labels"])
+    result["n_eff"] = float(result["n_eff"])
+    result["n_like"] = int(result["n_like"])
+    return result
+
+
+def _npz_path(path: str | Path) -> Path:
+    path = Path(path)
+    candidate = path if path.name.endswith(".npz") else path.with_name(path.name + ".npz")
+    return path if not candidate.exists() and path.exists() else candidate
+
+
 # ---------------------------------------------------------------------------
 # Save / load
 # ---------------------------------------------------------------------------
@@ -192,9 +252,7 @@ def load_emcee_results(path: str | Path) -> dict:
     # "run_v1.2" it would *replace* the trailing ".2" and look for
     # "run_v1.npz", and testing `path.suffix` alone would skip appending
     # entirely. Both give a FileNotFoundError for a file that was written.
-    candidate = path if path.name.endswith(".npz") else path.with_name(path.name + ".npz")
-    if not candidate.exists() and path.exists():
-        candidate = path        # archive stored under a name without the suffix
+    candidate = _npz_path(path)
     if not candidate.exists():
         raise FileNotFoundError(
             f"MCMC result archive not found: {candidate}"

@@ -33,8 +33,9 @@ flux low.
 from __future__ import annotations
 
 import multiprocessing as mp
-
 import warnings
+from contextlib import nullcontext
+from numbers import Integral
 
 import numpy as np
 import emcee
@@ -55,6 +56,7 @@ DEFAULT_PRIOR_BOUNDS: dict[str, tuple[float, float]] = {
     "dy": (-1.0, 1.0),
     "bkg": (-0.1, 0.1),
 }
+_PARAMETER_LABELS = ("flux", "dx", "dy", "bkg")
 
 
 def _resolve_prior_bounds(prior_bounds: dict | None) -> dict:
@@ -365,8 +367,13 @@ def run_mcmc(
     nsteps: int = 2000,
     ncores: int | None = None,
     progress: bool = True,
-) -> emcee.EnsembleSampler:
-    """Run the ``emcee`` ensemble sampler with an optional multiprocessing pool.
+    *,
+    sampler: str = "emcee",
+    n_live: int | None = None,
+    n_eff: int | None = None,
+    seed: int | None = None,
+) -> emcee.EnsembleSampler | dict:
+    """Sample the PSF posterior using emcee or Nautilus.
 
     Parameters
     ----------
@@ -383,26 +390,45 @@ def run_mcmc(
     psf_prepare_fraction : float
         Encircled-energy fraction of the prepared PSF.
     nwalkers : int
-        Number of MCMC walkers.
+        Number of emcee walkers.
     pos : ndarray of shape (nwalkers, 4)
-        Initial walker positions.
+        Initial emcee walker positions.
     nsteps : int, optional
-        Total number of MCMC steps. Default ``2000``.
+        Total number of emcee steps. Default ``2000``.
     ncores : int or None, optional
         Number of parallel worker processes. ``None`` uses
-        ``min(nwalkers, os.cpu_count())``. Set to ``1`` to disable
-        multiprocessing (useful in notebooks).
+        ``min(nwalkers, os.cpu_count())`` for emcee and one worker for
+        Nautilus. Set to ``1`` to disable multiprocessing.
     progress : bool, optional
-        Display a ``tqdm`` progress bar. Default *True*.
+        Display sampler progress. Default *True*.
+    sampler : {'emcee', 'nautilus'}, optional
+        Sampling backend. Default ``'emcee'``.
+    n_live : int or None, optional
+        Nautilus live points. ``None`` uses the Nautilus default.
+    n_eff : int or None, optional
+        Nautilus target effective sample size. ``None`` uses 10,000.
+    seed : int or None, optional
+        Random seed for Nautilus.
 
     Returns
     -------
-    sampler : emcee.EnsembleSampler
-        Completed sampler with the full chain stored in memory.
+    result : emcee.EnsembleSampler or dict
+        Completed emcee sampler, or a Nautilus result with ``labels``,
+        ``samples``, ``log_w`` (normalized log posterior weights), ``log_l``,
+        ``n_eff`` and ``n_like`` (number of likelihood evaluations).
+
+    Raises
+    ------
+    ValueError
+        If the backend or Nautilus sampling options are invalid.
+    ImportError
+        If the Nautilus backend is requested without its optional dependency.
+    RuntimeError
+        If Nautilus stops before meeting its sampling criteria.
 
     Notes
     -----
-    The acceptance fraction should be between ~0.2 and ~0.5.  If it is
+    For emcee, the acceptance fraction should be between ~0.2 and ~0.5.
     If it is consistently below 0.1 the sampler is stuck rather than
     under-run - increasing *nsteps* will not change it. The usual cause is
     walkers pinned against a prior wall, so check ``prior_bounds`` and the
@@ -411,8 +437,19 @@ def run_mcmc(
     ``sampler.get_autocorr_time(quiet=True)``; aim for
     ``nsteps / tau > 50``.
     """
-    ndim = 4
+    if sampler == "nautilus":
+        bounds = _resolve_prior_bounds(prior_bounds)
+        likelihood_kwargs = dict(
+            prepared=prepared, psf_os=psf_os, oversamp=oversamp,
+            native_shape=native_shape, psf_prepare_fraction=psf_prepare_fraction,
+        )
+        return _run_nautilus(bounds, likelihood_kwargs, ncores, progress, n_live, n_eff, seed)
+    if sampler != "emcee":
+        raise ValueError("sampler must be 'emcee' or 'nautilus'")
+    if n_live is not None or n_eff is not None or seed is not None:
+        raise ValueError("n_live, n_eff and seed are Nautilus options")
 
+    ndim = len(_PARAMETER_LABELS)
     if ncores is None:
         import os
         ncores = min(nwalkers, os.cpu_count() or 1)
@@ -430,17 +467,68 @@ def run_mcmc(
 
     if ncores > 1:
         with mp.Pool(processes=ncores) as pool:
-            sampler = emcee.EnsembleSampler(
+            ensemble = emcee.EnsembleSampler(
                 nwalkers, ndim, log_prob_prepared, pool=pool, **sampler_kwargs
             )
-            sampler.run_mcmc(pos, nsteps, progress=progress)
+            ensemble.run_mcmc(pos, nsteps, progress=progress)
     else:
-        sampler = emcee.EnsembleSampler(
+        ensemble = emcee.EnsembleSampler(
             nwalkers, ndim, log_prob_prepared, **sampler_kwargs
         )
-        sampler.run_mcmc(pos, nsteps, progress=progress)
+        ensemble.run_mcmc(pos, nsteps, progress=progress)
 
-    return sampler
+    return ensemble
+
+
+def _run_nautilus(bounds, likelihood_kwargs, ncores, progress, n_live, n_eff, seed):
+    try:
+        from nautilus import Prior, Sampler
+    except ModuleNotFoundError as exc:
+        if exc.name != "nautilus":
+            raise
+        raise ImportError(
+            'Install the Nautilus backend with pip install "jwst-psfmc[nautilus]"'
+        ) from exc
+
+    prior = Prior()
+    for label in _PARAMETER_LABELS:
+        lo, hi = bounds[label]
+        if not (np.isfinite(lo) and np.isfinite(hi) and lo < hi):
+            raise ValueError(f"Nautilus needs finite, increasing prior bounds for {label}")
+        prior.add_parameter(label, dist=(lo, hi))
+
+    for name, value, minimum in (
+        ("ncores", ncores, 1),
+        ("n_live", n_live, len(_PARAMETER_LABELS) + 1),
+        ("n_eff", n_eff, 1),
+    ):
+        if value is not None and (
+            isinstance(value, bool) or not isinstance(value, Integral) or value < minimum
+        ):
+            raise ValueError(f"{name} must be an integer >= {minimum}")
+
+    live_options = {} if n_live is None else {"n_live": int(n_live)}
+    pool_context = nullcontext() if ncores is None or ncores == 1 else mp.Pool(int(ncores))
+    with pool_context as pool:
+        nested = Sampler(
+            prior, log_likelihood_cov_prepared, likelihood_kwargs=likelihood_kwargs,
+            pass_dict=False, pool=pool, seed=seed, **live_options,
+        )
+        if not nested.run(
+            n_eff=10_000 if n_eff is None else n_eff,
+            discard_exploration=True, verbose=progress,
+        ):
+            raise RuntimeError("Nautilus stopped before meeting its sampling criteria")
+        samples, log_w, log_l = nested.posterior()
+
+    return {
+        "labels": _PARAMETER_LABELS,
+        "samples": samples,
+        "log_w": log_w,
+        "log_l": log_l,
+        "n_eff": float(nested.n_eff),
+        "n_like": int(nested.n_like),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -481,7 +569,45 @@ def summarize_emcee(
     if flat.size == 0:
         raise ValueError("Empty chain after burn-in/thinning; reduce burnin or thin")
 
-    q16, q50, q84 = np.percentile(flat, [16, 50, 84], axis=0)
+    return _format_summary(np.percentile(flat, [16, 50, 84], axis=0), labels)
+
+
+def summarize_posterior(result: dict) -> dict:
+    """Summarize a Nautilus posterior using its original weights.
+
+    Parameters
+    ----------
+    result : dict
+        Result returned by Nautilus fitting or by
+        :func:`~jwst_psfmc.io.load_nautilus_results`.
+
+    Returns
+    -------
+    summary : dict
+        Per-parameter median and distances to the 16th and 84th percentiles,
+        with the same keys as :func:`summarize_emcee`.
+
+    Raises
+    ------
+    ValueError
+        If the posterior weights do not have positive finite total mass.
+    """
+    samples = result["samples"]
+    weights = np.exp(result["log_w"])
+    order = np.argsort(samples, axis=0)
+    sorted_samples = np.take_along_axis(samples, order, axis=0)
+    cdf = np.cumsum(weights[order], axis=0)
+    if not len(cdf) or not np.isfinite(cdf[-1]).all() or np.any(cdf[-1] <= 0):
+        raise ValueError("Posterior weights must have positive finite total mass")
+    quantiles = np.array([
+        values[np.searchsorted(mass, np.array([0.16, 0.5, 0.84]) * mass[-1])]
+        for values, mass in zip(sorted_samples.T, cdf.T)
+    ]).T
+    return _format_summary(quantiles, result["labels"])
+
+
+def _format_summary(quantiles, labels):
+    q16, q50, q84 = quantiles
     return {
         label: {
             "median": float(q50[i]),
