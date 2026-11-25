@@ -1,0 +1,138 @@
+{
+  "sampler_status": "converged",
+  "quantiles": {
+    "point_total_flux": {
+      "q16": 0.9591057257829002,
+      "median": 1.0304825108041444,
+      "q84": 1.1031426802713895,
+      "q95": 1.1498194628844174
+    },
+    "host_total_flux": {
+      "q16": 0.7144515639209118,
+      "median": 0.9318014730715524,
+      "q84": 1.1510435906027172,
+      "q95": 1.288000562081203
+    },
+    "source_total_flux": {
+      "q16": 1.7904923973172164,
+      "median": 1.9623330458501562,
+      "q84": 2.1375463415641924,
+      "q95": 2.247003335994815
+    },
+    "point_aperture_flux": {
+      "q16": 0.9641010436608275,
+      "median": 1.0358495809516086,
+      "q84": 1.1088881869496716,
+      "q95": 1.155808076615867
+    },
+    "host_aperture_flux": {
+      "q16": 0.6996247093395815,
+      "median": 0.9124640041127321,
+      "q84": 1.1271562386862646,
+      "q95": 1.2612709725624323
+    },
+    "source_aperture_flux": {
+      "q16": 1.7809835762924298,
+      "median": 1.9483996861797865,
+      "q84": 2.119030305832449,
+      "q95": 2.225737043658263
+    },
+    "host_re": {
+      "q16": 3.5,
+      "median": 3.5,
+      "q84": 3.5,
+      "q95": 3.5
+    },
+    "host_re_circ": {
+      "q16": 2.9698484809834995,
+      "median": 2.9698484809834995,
+      "q84": 2.9698484809834995,
+      "q95": 2.9698484809834995
+    }
+  },
+  "host_fraction": {
+    "total": {
+      "quantiles": {
+        "q16": 0.3969405129303227,
+        "median": 0.4747109344527579,
+        "q84": 0.5416687180326762,
+        "q95": 0.5788332699409271
+      },
+      "defined_probability": 0.9999999999999993
+    },
+    "aperture": {
+      "quantiles": {
+        "q16": 0.39069414503917455,
+        "median": 0.4681908712665435,
+        "q84": 0.5351659468418937,
+        "q95": 0.5724415795393911
+      },
+      "defined_probability": 0.9999999999999993
+    }
+  },
+  "correlations": {
+    "point.flux": {
+      "point.flux": 1.0,
+      "host.flux": -0.7093197801010152,
+      "host.re": null,
+      "host.n": null,
+      "sky.level": 0.24718856077170098
+    },
+    "host.flux": {
+      "point.flux": -0.7093197801010154,
+      "host.flux": 0.9999999999999999,
+      "host.re": null,
+      "host.n": null,
+      "sky.level": -0.48837938370359285
+    },
+    "host.re": {
+      "point.flux": null,
+      "host.flux": null,
+      "host.re": null,
+      "host.n": null,
+      "sky.level": null
+    },
+    "host.n": {
+      "point.flux": null,
+      "host.flux": null,
+      "host.re": null,
+      "host.n": null,
+      "sky.level": null
+    },
+    "sky.level": {
+      "point.flux": 0.24718856077170098,
+      "host.flux": -0.48837938370359285,
+      "host.re": null,
+      "host.n": null,
+      "sky.level": 0.9999999999999998
+    }
+  },
+  "prior_boundary": {
+    "interval_fraction": 0.05,
+    "mass_threshold": 0.25,
+    "parameters": {
+      "point.flux": {
+        "lower_probability": 0.0,
+        "upper_probability": 0.0,
+        "flagged": false
+      },
+      "host.flux": {
+        "lower_probability": 0.00011363636363636358,
+        "upper_probability": 0.0,
+        "flagged": false
+      },
+      "sky.level": {
+        "lower_probability": 0.0,
+        "upper_probability": 0.0,
+        "flagged": false
+      }
+    }
+  },
+  "resolution": null,
+  "near_circular_q_threshold": 0.95,
+  "near_circular_probability": 0.0,
+  "axis_ratio_is_fixed": true,
+  "aperture_pixels": 441,
+  "data_unit": "uJy/pixel",
+  "flux_normalization_reference": "centered 0.36 arcsec aperture"
+}

@@ -1,0 +1,13 @@
+{
+  "seed": 20261117,
+  "head": "38f0834d5fdd977c9c761907d0ab59a82bc5ae90",
+  "note": "Legacy numerical compatibility fixtures, not a physical PSF validation. No MCMC chains.",
+  "files": {
+    "bright.npz": "4253d4a05c9058015789ba24df5508745a03b425a53e87a677c367a456790da0",
+    "example1.npz": "031b5373204c7752b989878d4a16df63e8c4c552f0ef26e2c6f15d7c2a33fd10",
+    "example2.npz": "6a9422be428b434dacd9221a6a0c529b007e1f65088145a7239a74148cc26a66",
+    "faint.npz": "ef63fd9cd6ef3cbfef082409828aacc8c4863bdd03dc233dd893267e506eb897",
+    "non_detection.npz": "4eef688620415bd3b3e58c70fcb8fde50eff87d57741e008774e7f7892827dcc",
+    "signed_flux.npz": "2527e40c335c7047ffe30f8f9b22a735c1276515a78b1386a3b2537d5cf97c66"
+  }
+}

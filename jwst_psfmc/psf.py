@@ -14,6 +14,14 @@ from scipy.ndimage import fourier_shift
 import matplotlib.pyplot as plt
 
 
+def _psf_fft(psf: np.ndarray) -> np.ndarray:
+    return np.fft.fftn(np.asarray(psf, dtype=np.float64))
+
+
+def _shift_psf_from_fft(psf_ft: np.ndarray, dx: float, dy: float) -> np.ndarray:
+    return np.fft.ifftn(fourier_shift(psf_ft, shift=[dy, dx])).real
+
+
 def shift_psf_fourier(psf: np.ndarray, dx: float, dy: float) -> np.ndarray:
     """Shift a 2-D PSF array in Fourier space (exact, band-limited interpolation).
 
@@ -41,10 +49,7 @@ def shift_psf_fourier(psf: np.ndarray, dx: float, dy: float) -> np.ndarray:
     matters. Band-limited interpolation of a truncated PSF also produces small
     negative ringing, so the output is not guaranteed non-negative.
     """
-    psf = np.asarray(psf, dtype=np.float64)
-    psf_ft = np.fft.fftn(psf)
-    shifted = np.fft.ifftn(fourier_shift(psf_ft, shift=[dy, dx])).real
-    return shifted
+    return _shift_psf_from_fft(_psf_fft(psf), dx, dy)
 
 
 def downsample_psf(psf_os: np.ndarray, oversamp: int, recenter_peak: bool = False) -> np.ndarray:
@@ -360,12 +365,28 @@ def psf_model(
         If PSF normalisation fails (non-positive or non-finite sum after
         downsampling and shape-matching).
     """
+    return _psf_model_from_fft(
+        param, _psf_fft(psf_os), oversamp, output_shape=output_shape,
+        native_shape=native_shape, psf_prepare_fraction=psf_prepare_fraction,
+        return_meta=return_meta,
+    )
+
+
+def _psf_model_from_fft(
+    param: np.ndarray,
+    psf_ft: np.ndarray,
+    oversamp: int,
+    output_shape: tuple[int, int] | None = None,
+    native_shape: tuple[int, int] | None = None,
+    psf_prepare_fraction: float = 1.0,
+    return_meta: bool = False,
+) -> np.ndarray | tuple[np.ndarray, dict]:
     flux, dx_native, dy_native = float(param[0]), float(param[1]), float(param[2])
 
     dx = dx_native * oversamp
     dy = dy_native * oversamp
 
-    psf_shifted = shift_psf_fourier(psf_os, dx, dy)
+    psf_shifted = _shift_psf_from_fft(psf_ft, dx, dy)
     psf = downsample_psf(psf_shifted, oversamp, recenter_peak=False)
 
     model_fraction = 1.0

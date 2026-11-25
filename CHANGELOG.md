@@ -9,6 +9,34 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.4.0] – 2026-11-24
+
+### Added
+- Sérsic and composite direct-image fitting with a calibrated point and
+  extended-source response, named parameters, and shared or fixed geometry.
+- Finite Gaussian pixel covariance, masks, model component diagnostics,
+  and portable result and FITS snapshot formats for composite fits.
+- Same-filter joint fits with per-frame PSFs and explicit shared-reference
+  covariance for difference images.
+- A Sérsic galaxy fitting notebook that measures an annular sky prior,
+  checks renderer accuracy, and compares error coverage for diagonal ERR
+  and pixel covariance.
+- Reproducible synthetic validation and diagnostics on NEXUS stars, blank
+  sky, and the multi-epoch transient AT 2026abck.
+
+### Changed
+- Composite and joint archives record renderer and execution provenance
+  alongside sampler diagnostics. Legacy point-source archives remain
+  readable with the existing result loaders.
+
+### Fixed
+- The synthetic validation runner invalidates the previous acceptance
+  manifest at startup and records execution errors.
+- Independent dense fits in a joint model honor the joint workspace cap
+  and any stricter per-frame cap.
+- M7 validation helpers and their synthetic design are included in the
+  source distribution so its regression tests collect after unpacking.
+
 ## [0.3.0] – 2026-11-10
 
 ### Added
@@ -308,7 +336,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   TestPyPI dry-run target; see `RELEASING.md`.
 - Full NumPy-style docstrings on all public functions.
 
-[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mingyangzhuang/jwst_psfmc/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.4
 [0.2.3]: https://github.com/mingyangzhuang/jwst_psfmc/releases/tag/v0.2.3

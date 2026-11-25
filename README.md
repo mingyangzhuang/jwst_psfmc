@@ -215,6 +215,14 @@ res = jpm.load_emcee_results("example2_f200w_mcmc.npz")
 print(res["summary"])
 ```
 
+`prepare_for_fitting` estimates the default flux upper bound and the
+walker initialization scale from the pixels included in the likelihood.
+Use `flux_prior_bounds=(low, high)` to set an explicit open interval in the
+fit's flux units. Signed bounds are supported for difference images.
+For reproducible emcee fits, pass the same `seed` to both
+`prepare_for_fitting` and `run_mcmc`. The preparation and sampler use
+independent streams derived from that seed.
+
 ![Data, model and residual for a detection](https://raw.githubusercontent.com/mingyangzhuang/jwst_psfmc/master/docs/figures/detection_triptych.png?v=0.2.3)
 
 *Data, best-fit model and residual for a detected transient — AT 2025amoq,
@@ -389,7 +397,36 @@ step-by-step notebook covering both regimes, using two epochs of the same source
 
 ---
 
+## Point sources and Sérsic models
+
+The generic fitting API accepts a `CompositeModel` with point, Sérsic and
+constant-background components. A prepared fit records the PSF response
+convention, parameter definitions, covariance and input hashes. Use
+`save_model_results` to preserve the posterior in NPZ and
+`save_model_snapshot` to preserve one evaluated model and its residuals
+in FITS. Reload the snapshot with `load_model_snapshot` and use
+`plot_model_fit`, `plot_decomposition` or `plot_residual_diagnostics`.
+
+The [Sérsic galaxy fitting notebook](examples/demo_galaxy_covariance.ipynb)
+measures a sky prior from an annulus, checks the renderer against an
+independent continuous reference, and compares radius error coverage
+with diagonal ERR and finite pixel covariance.
+
+Two [source-checkout examples](docs/validation/M8_DELIVERY.md) show signed
+point-source fits on real difference images and a point-plus-host fit on
+a mock direct image with fixed geometry. The generic noise API also
+supports masked dense fits with a finite covariance or fully observed
+periodic FFT fits. For ep01 F444W 30 mas, the
+[real-star tests](docs/validation/EMPIRICAL_PSF_SKY.md#f444w-paired-sampling-and-stellar-nulls)
+found strong PSF and covariance sensitivity for bright points with weak,
+compact hosts. The example lists its fixed-morphology assumptions and
+does not claim that regime is calibrated.
+
 ## Module Overview
+
+For registered single-filter epochs, the [joint fitting guide](docs/validation/M9_JOINT_FITTING.md)
+covers shared host parameters, per-frame transient flux and background,
+and block covariance for differences that share a reference.
 
 | Module | Contents |
 |--------|----------|

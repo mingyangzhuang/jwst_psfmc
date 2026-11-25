@@ -1,0 +1,14 @@
+diff --git a/jwst_psfmc/covariance.py b/jwst_psfmc/covariance.py
+index 75fe010..04ea6e4 100644
+--- a/jwst_psfmc/covariance.py
++++ b/jwst_psfmc/covariance.py
+@@ -147,9 +147,6 @@ def get_source_mask(image: np.ndarray, npixels: int = 15) -> np.ndarray:
+     threshold = median + 3.0 * std
+ 
+     # Detect on the same (smoothed) image the threshold was measured from.
+-    # Thresholding the unsmoothed image with a threshold derived from the
+-    # smoothed one applies an effective cut of well under 3 sigma and flags a
+-    # large fraction of blank sky as sources.
+     segm = detect_sources(image_conv, threshold, npixels=npixels)
+     if segm is None:                      # genuinely source-free image
+         return np.zeros(image.shape, dtype=bool)

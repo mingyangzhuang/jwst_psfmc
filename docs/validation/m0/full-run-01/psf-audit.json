@@ -1,0 +1,128 @@
+{
+  "psfs": {
+    "examples/PSF/example1_f200w_PSF_4_c.fits": {
+      "sha256": "9e8d3cad097366b31a100788460c60acc01b61e8ae03acb4962dfb84c1f1ae1a",
+      "shape": [
+        535,
+        535
+      ],
+      "raw_sum": 0.9999999999999996,
+      "header": "SIMPLE  =                    T / conforms to FITS standard                      \nBITPIX  =                  -64 / array data type                                \nNAXIS   =                    2 / number of array dimensions                     \nNAXIS1  =                  535                                                  \nNAXIS2  =                  535                                                  \nHIERARCH n_good_stars = 29                                                      \nHIERARCH n_all_stars = 29                                                       \nEND                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ",
+      "assumed_oversampling_for_legacy_checks": 4,
+      "response_semantics": "unknown",
+      "generation_method": "unknown",
+      "center_definition": "unknown",
+      "normalization_reference": "finite input array sum in legacy code",
+      "pixel_response": "unknown",
+      "drizzle_kernel": "unknown",
+      "drizzle_pixfrac": "unknown",
+      "drizzle_scale": "unknown",
+      "even_native_checks": [
+        {
+          "requested_native": [
+            10,
+            10
+          ],
+          "actual_native": [
+            9,
+            9
+          ],
+          "preparation_fraction": 0.7895574646477673,
+          "block_sum_retention": 0.9670293399345944
+        },
+        {
+          "requested_native": [
+            11,
+            11
+          ],
+          "actual_native": [
+            11,
+            11
+          ],
+          "preparation_fraction": 0.7998444719528468,
+          "block_sum_retention": 0.9999999999999999
+        },
+        {
+          "requested_native": [
+            12,
+            12
+          ],
+          "actual_native": [
+            11,
+            11
+          ],
+          "preparation_fraction": 0.808485757750252,
+          "block_sum_retention": 0.9866324625302437
+        }
+      ]
+    },
+    "examples/PSF/example2_f200w_PSF_4_c.fits": {
+      "sha256": "2dea68c2845c67109c67081deb1e3474c404c1e1880dbb5fce1a1e9b059bc2d5",
+      "shape": [
+        535,
+        535
+      ],
+      "raw_sum": 1.0000000000000002,
+      "header": "SIMPLE  =                    T / conforms to FITS standard                      \nBITPIX  =                  -64 / array data type                                \nNAXIS   =                    2 / number of array dimensions                     \nNAXIS1  =                  535                                                  \nNAXIS2  =                  535                                                  \nHIERARCH n_good_stars = 29                                                      \nHIERARCH n_all_stars = 29                                                       \nEND                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ",
+      "assumed_oversampling_for_legacy_checks": 4,
+      "response_semantics": "unknown",
+      "generation_method": "unknown",
+      "center_definition": "unknown",
+      "normalization_reference": "finite input array sum in legacy code",
+      "pixel_response": "unknown",
+      "drizzle_kernel": "unknown",
+      "drizzle_pixfrac": "unknown",
+      "drizzle_scale": "unknown",
+      "even_native_checks": [
+        {
+          "requested_native": [
+            10,
+            10
+          ],
+          "actual_native": [
+            9,
+            9
+          ],
+          "preparation_fraction": 0.7843113624583473,
+          "block_sum_retention": 0.9741140905200231
+        },
+        {
+          "requested_native": [
+            11,
+            11
+          ],
+          "actual_native": [
+            11,
+            11
+          ],
+          "preparation_fraction": 0.7948680974553066,
+          "block_sum_retention": 1.0000000000000002
+        },
+        {
+          "requested_native": [
+            12,
+            12
+          ],
+          "actual_native": [
+            11,
+            11
+          ],
+          "preparation_fraction": 0.8035316427254784,
+          "block_sum_retention": 0.9884715357102001
+        }
+      ]
+    }
+  },
+  "example_kernel_spectra": {
+    "examples/data/example1_f200w_cov_kernel.fits": {
+      "minimum": 0.2987606749977687,
+      "maximum": 2.5340534512837563,
+      "floor_fraction": 0.0
+    },
+    "examples/data/example2_f200w_cov_kernel.fits": {
+      "minimum": 0.28905527539990594,
+      "maximum": 2.5982641398162754,
+      "floor_fraction": 0.0
+    }
+  }
+}

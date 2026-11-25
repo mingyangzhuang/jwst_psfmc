@@ -1,0 +1,75 @@
+[
+  {
+    "name": "freeze",
+    "command": [
+      "/Users/mingyang/anaconda3/envs/py312/bin/python",
+      "-m",
+      "pip",
+      "freeze"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "dependency-check",
+    "command": [
+      "/Users/mingyang/anaconda3/envs/py312/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "requested-extras",
+    "command": [
+      "/Users/mingyang/anaconda3/envs/py312/bin/python",
+      "-c",
+      "from importlib.metadata import version\nfrom packaging.version import Version\nfor n,v in [('pytest','7'),('pytest-cov','0'),('nautilus-sampler','1.0.6'),('jupyter','1')]:\n print(n, version(n))\n if Version(version(n)) < Version(v): raise RuntimeError(n + ' is too old')\n"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "capture",
+    "command": [
+      "/Users/mingyang/anaconda3/envs/py312/bin/python",
+      "scripts/m0_baseline.py",
+      "--capture",
+      "--output",
+      "/Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc/docs/validation/m0/full-run-01"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "all-tests",
+    "command": [
+      "/Users/mingyang/anaconda3/envs/py312/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=/Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc/docs/validation/m0/full-run-01/suite.xml"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "demo_covariance_kernel",
+    "command": [
+      "/Users/mingyang/anaconda3/envs/py312/bin/python",
+      "scripts/m0_notebooks.py",
+      "demo_covariance_kernel",
+      "--output",
+      "/Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc/docs/validation/m0/full-run-01/notebooks"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "demo_psf_photometry",
+    "command": [
+      "/Users/mingyang/anaconda3/envs/py312/bin/python",
+      "scripts/m0_notebooks.py",
+      "demo_psf_photometry",
+      "--output",
+      "/Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc/docs/validation/m0/full-run-01/notebooks"
+    ],
+    "exit_code": 0
+  }
+]

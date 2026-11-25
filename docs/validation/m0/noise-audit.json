@@ -1,0 +1,12 @@
+{
+  "seed": 20261117,
+  "white_logl": -34.71752914758171,
+  "direct_white_logl": -34.71752914758171,
+  "white_logl_difference": 0.0,
+  "fft_quadratic": 24.025115433793857,
+  "dense_quadratic": 24.025115433793864,
+  "relative_difference": 2.957499778588563e-16,
+  "masked_zero_residual_quadratic": 24.037819197425232,
+  "masked_marginal_quadratic": 23.99046581038238,
+  "interpretation": "Periodic toy oracle only; masked zero residuals are not marginalization."
+}

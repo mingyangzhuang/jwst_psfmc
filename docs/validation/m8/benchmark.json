@@ -1,0 +1,123 @@
+{
+  "platform": "macOS-10.16-x86_64-i386-64bit",
+  "python": "3.12.11",
+  "peak_rss_bytes": 183259136,
+  "metrics": [
+    {
+      "size": 25,
+      "backend": "diagonal",
+      "prepare_s": 0.0019866660004481673,
+      "likelihood_s": 1.7359170014970006e-05
+    },
+    {
+      "size": 25,
+      "backend": "fft_periodic",
+      "prepare_s": 0.01613437500782311,
+      "likelihood_s": 0.00011881415994139389
+    },
+    {
+      "size": 25,
+      "backend": "dense",
+      "prepare_s": 0.1225780829845462,
+      "likelihood_s": 0.0001809645802131854
+    },
+    {
+      "size": 25,
+      "renderer": "point+Sersic",
+      "n": 1.0,
+      "re_pixels": 3.5,
+      "point_to_host": 0.5,
+      "max_source_cells": 500000,
+      "cold_s": 0.22631587501382455,
+      "warm_s": 0.17248115625261562
+    },
+    {
+      "size": 25,
+      "renderer": "point+Sersic",
+      "n": 4.0,
+      "re_pixels": 1.5,
+      "point_to_host": 0.5,
+      "max_source_cells": 500000,
+      "cold_s": 0.17903529200702906,
+      "warm_s": 0.185726062496542
+    },
+    {
+      "size": 51,
+      "backend": "diagonal",
+      "prepare_s": 0.00026633302331902087,
+      "likelihood_s": 4.577708983561024e-05
+    },
+    {
+      "size": 51,
+      "backend": "fft_periodic",
+      "prepare_s": 0.00618779199430719,
+      "likelihood_s": 0.00035298458009492607
+    },
+    {
+      "size": 51,
+      "renderer": "point+Sersic",
+      "n": 1.0,
+      "re_pixels": 3.5,
+      "point_to_host": 0.5,
+      "max_source_cells": 500000,
+      "cold_s": 0.5148613750061486,
+      "warm_s": 0.47940882299735676
+    },
+    {
+      "size": 51,
+      "renderer": "point+Sersic",
+      "n": 4.0,
+      "re_pixels": 1.5,
+      "point_to_host": 0.5,
+      "max_source_cells": 500000,
+      "cold_s": 0.43236304199672304,
+      "warm_s": 0.47244718749425374
+    },
+    {
+      "size": 101,
+      "backend": "diagonal",
+      "prepare_s": 0.0015340000099968165,
+      "likelihood_s": 6.039458006853238e-05
+    },
+    {
+      "size": 101,
+      "backend": "fft_periodic",
+      "prepare_s": 0.0056921660143416375,
+      "likelihood_s": 0.0013357850001193582
+    },
+    {
+      "size": 101,
+      "renderer": "point+Sersic",
+      "n": 1.0,
+      "re_pixels": 3.5,
+      "default_guard": "padded source grid needs 1058841 cells, above max_source_cells"
+    },
+    {
+      "size": 101,
+      "renderer": "point+Sersic",
+      "n": 1.0,
+      "re_pixels": 3.5,
+      "point_to_host": 0.5,
+      "max_source_cells": 1250000,
+      "cold_s": 1.1944045000127517,
+      "warm_s": 1.3849696980032604
+    },
+    {
+      "size": 101,
+      "renderer": "point+Sersic",
+      "n": 4.0,
+      "re_pixels": 1.5,
+      "default_guard": "padded source grid needs 1058841 cells, above max_source_cells"
+    },
+    {
+      "size": 101,
+      "renderer": "point+Sersic",
+      "n": 4.0,
+      "re_pixels": 1.5,
+      "point_to_host": 0.5,
+      "max_source_cells": 1250000,
+      "cold_s": 1.6944633339880966,
+      "warm_s": 1.618220093747368
+    }
+  ]
+}

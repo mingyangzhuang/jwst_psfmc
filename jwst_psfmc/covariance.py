@@ -21,6 +21,7 @@ from scipy.ndimage import grey_dilation
 from astropy.convolution import convolve
 from astropy.stats import sigma_clipped_stats
 from photutils.utils import circular_footprint
+from photutils.utils.exceptions import NoDetectionsWarning
 from photutils.segmentation import detect_sources, make_2dgaussian_kernel
 
 
@@ -146,11 +147,12 @@ def get_source_mask(image: np.ndarray, npixels: int = 15) -> np.ndarray:
     _, median, std = sigma_clipped_stats(image_conv, sigma=3)
     threshold = median + 3.0 * std
 
-    # Detect on the same (smoothed) image the threshold was measured from.
-    # Thresholding the unsmoothed image with a threshold derived from the
-    # smoothed one applies an effective cut of well under 3 sigma and flags a
-    # large fraction of blank sky as sources.
-    segm = detect_sources(image_conv, threshold, npixels=npixels)
+    # The pixel-count argument has the same position under both Photutils
+    # spellings. A no-source result is handled by the empty mask below.
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message=r"^No sources were found\.",
+                                category=NoDetectionsWarning)
+        segm = detect_sources(image_conv, threshold, npixels)
     if segm is None:                      # genuinely source-free image
         return np.zeros(image.shape, dtype=bool)
 

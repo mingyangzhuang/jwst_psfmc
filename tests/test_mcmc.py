@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 
 from jwst_psfmc.mcmc import (
     prepare_for_fitting,
+    log_likelihood_cov_prepared,
+    log_prob_prepared,
     log_prior,
     run_mcmc,
     summarize_emcee,
@@ -72,6 +74,54 @@ class TestFluxPriorMin:
         assert all(np.isfinite(log_prior(w, bounds)) for w in fit["pos"])
 
 
+def test_excluded_pixels_leave_default_flux_prior_and_initialization_unchanged(fit_kwargs):
+    data = np.full((9, 9), .2)
+    err = np.ones_like(data)
+    err[0, 1] = 0
+    err[0, 2] = np.nan
+    weight = np.ones_like(data)
+    weight[0, 0] = 0
+    weight[0, 3] = np.nan
+    data[0, 4] = np.nan
+    options = dict(fit_kwargs, data=data, err=err, fit_weight=weight, seed=22)
+    first = prepare_for_fitting(**options)
+    modified = data.copy()
+    modified[0, :4] = [1e6, 2e6, 3e6, 4e6]
+    second = prepare_for_fitting(**(options | {"data": modified}))
+    assert first["prior_bounds"]["flux"] == (-3.0, 6.0)
+    assert first["prior_bounds"] == second["prior_bounds"]
+    np.testing.assert_array_equal(first["pos"], second["pos"])
+
+
+def test_explicit_flux_bounds_and_narrow_intervals_support_signed_flux(fit_kwargs):
+    bounds = (-2.002, -2.001)
+    fit = prepare_for_fitting(**fit_kwargs, flux_prior_bounds=bounds,
+                              pos_prior_half_width=.003, bkg_prior_half_width=.002,
+                              flux_prior_scale=500, flux_prior_min=-900, seed=14)
+    assert fit["prior_bounds"]["flux"] == bounds
+    assert len(np.unique(fit["pos"], axis=0)) == fit["nwalkers"]
+    assert all(log_prior(row, fit["prior_bounds"]) == 0 for row in fit["pos"])
+    assert np.linalg.matrix_rank(fit["pos"] - fit["pos"].mean(axis=0)) == 4
+    lower, upper = np.array(list(fit["prior_bounds"].values())).T
+    assert not np.any((fit["pos"] == lower) | (fit["pos"] == upper))
+
+
+@pytest.mark.parametrize("bounds", [(-2, -2), (2, -2), (-2, np.inf), (-2,), ("bad", 1)])
+def test_invalid_explicit_flux_bounds_raise(fit_kwargs, bounds):
+    with pytest.raises(ValueError, match="bounds"):
+        prepare_for_fitting(**fit_kwargs, flux_prior_bounds=bounds)
+
+
+def test_legacy_emcee_seed_replays(fit_kwargs):
+    def sample(seed):
+        fit = prepare_for_fitting(**fit_kwargs, nwalkers=8, seed=seed)
+        return run_mcmc(**fit, nsteps=12, ncores=1, progress=False, seed=seed).get_chain()
+
+    first = sample(12)
+    np.testing.assert_array_equal(first, sample(12))
+    assert not np.array_equal(first, sample(13))
+
+
 @pytest.fixture(scope="module")
 def det_fit():
     """prepare_for_fitting on the detection example."""
@@ -106,15 +156,28 @@ class TestRunMcmcRejectsTypos:
         assert det_sampler.get_chain().shape[-1] == 4
 
 
-def test_nautilus_end_to_end(det_fit, tmp_path):
+def test_nautilus_end_to_end(det_fit, tmp_path, monkeypatch):
     pytest.importorskip("nautilus")
     import jwst_psfmc as jpm
+    from jwst_psfmc import mcmc
 
     fit, _, _ = det_fit
+    transform = mcmc._psf_fft
+    calls = []
+
+    def counted_fft(psf):
+        calls.append(psf.shape)
+        return transform(psf)
+
+    monkeypatch.setattr(mcmc, "_psf_fft", counted_fft)
     result = run_mcmc(
         **fit, sampler="nautilus", n_live=100, n_eff=100, ncores=1,
         seed=7, progress=False,
     )
+    assert calls == [fit["psf_os"].shape]
+    sample = result["samples"][0]
+    fields = ("prepared", "psf_os", "oversamp", "native_shape", "psf_prepare_fraction")
+    assert result["log_l"][0] == log_likelihood_cov_prepared(sample, **{k: fit[k] for k in fields})
     path = tmp_path / "posterior.v1"
     jpm.save_nautilus_results(path, result)
     loaded = jpm.load_nautilus_results(path)
@@ -136,6 +199,28 @@ def test_nautilus_end_to_end(det_fit, tmp_path):
         assert axes[-1].get_xlabel() == "bkg"
     finally:
         plt.close(fig)
+
+
+def test_legacy_emcee_and_flux_summary_each_compute_one_psf_fft(det_fit, monkeypatch):
+    from jwst_psfmc import mcmc
+
+    fit, _, _ = det_fit
+    transform = mcmc._psf_fft
+    calls = []
+
+    def counted_fft(psf):
+        calls.append(psf.shape)
+        return transform(psf)
+
+    monkeypatch.setattr(mcmc, "_psf_fft", counted_fft)
+    sampler = run_mcmc(**fit, nsteps=12, ncores=1, progress=False, seed=21)
+    assert calls == [fit["psf_os"].shape]
+    result = summarize_flux_from_chain(sampler, burnin=2, thin=2, fit=fit)
+    assert calls == [fit["psf_os"].shape] * 2
+    fields = ("prepared", "psf_os", "oversamp", "prior_bounds", "native_shape", "psf_prepare_fraction")
+    point = sampler.get_chain()[-1, 0]
+    assert sampler.get_log_prob()[-1, 0] == log_prob_prepared(point, **{k: fit[k] for k in fields})
+    assert np.isfinite(result["stamp_flux_sum"]["median"])
 
 
 class TestPostFitNormalisation:

@@ -1,0 +1,4 @@
+include scripts/__init__.py
+include scripts/run_m7.py
+include tests/__init__.py
+include docs/validation/m7/design.json

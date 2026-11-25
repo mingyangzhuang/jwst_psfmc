@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "root_seed": 20261122,
+  "sbc_trials": 120,
+  "fixed_truth_trials": 120,
+  "stress_trials": 8,
+  "independent_posterior_draws": 512,
+  "posterior_predictive_draws": 256,
+  "estimated_kernel_trials": 8,
+  "radius_sbc": {
+    "id": "b06", "n": 1, "re_prior": [0.8, 1.7], "grid_points": 361,
+    "sigma": 0.012, "cdf_refinement_max": 0.003
+  },
+  "criteria": {
+    "numeric_epsilon_max": 0.1,
+    "reference_epsilon_max": 0.005,
+    "sbc_familywise_alpha": 0.05,
+    "sbc_histogram_bins": 10,
+    "coverage_familywise_alpha": 0.05,
+    "population_abs_mean_bias_over_median_sd": 0.30,
+    "sampler_parity_max_combined_mcse": 5
+  },
+  "psf": {"sigma_x": 0.68, "sigma_y": 0.81, "half_width": 4, "spacing": 0.0625, "source_oversamp": 16, "max_offset": 0.5},
+  "priors": {"point.flux": [-1, 4], "host.flux": [0, 3], "sky.level": [-0.12, 0.12]},
+  "numeric_fields": ["id", "group", "kind", "n", "re", "q", "pa", "dx", "dy", "contrast", "host_sn"],
+  "numeric": [
+    ["a01","core","effective",0.5,1,0.7,0,0,0,0,50],
+    ["a02","core","pre_pixel",0.5,1,0.4,30,0.25,-0.5,0.5,20],
+    ["a03","core","effective",1,1,0.7,30,0.25,-0.25,2,20],
+    ["a04","core","pre_pixel",1,3,0.7,89,0,0.25,0.5,20],
+    ["a05","core","effective",2,1,1,0,0.49,-0.5,0.5,20],
+    ["a06","core","pre_pixel",2,0.3,0.4,30,0.25,0,0,5],
+    ["a07","core","effective",4,0.3,0.4,89,0.25,-0.25,2,20],
+    ["a08","core","pre_pixel",4,1,0.7,30,0,0,0.5,20],
+    ["a09","boundary","effective",4,0.03,0.30,49,0.49,-0.5,0,50],
+    ["a10","boundary","pre_pixel",4,3,0.4,89,0.49,0.49,2,50],
+    ["a11","boundary","effective",1,1,0.7,0,0.17,-0.23,10,50],
+    ["a12","boundary","pre_pixel",4,0.18,0.39,61,0.17,-0.23,2,300]
+  ],
+  "inference_fields": ["id", "group", "model", "noise", "host_sn", "truth", "re", "n"],
+  "inference": [
+    ["b01","core","point","diagonal",20,[1,0,0.02],1,0.5],
+    ["b02","core","host","finite",20,[0,1,0.02],1.1,1],
+    ["b03","core","composite","finite",30,[1.5,1,0.02],1.4,0.5],
+    ["b04","boundary","composite","finite",5,[1.5,0,0.02],1.4,0.5],
+    ["b05","boundary","composite","finite",20,[1.5,1,0.02],0.03,0.5]
+  ],
+  "robustness": [
+    ["c01","matched"], ["c02","wider_psf"], ["c03","psf_wings"], ["c04","psf_ellipticity"],
+    ["c05","psf_centroid"], ["c06","background_gradient"], ["c07","neighbor"],
+    ["c08","non_sersic_host"], ["c09","finite_as_periodic"], ["c10","mask_core"],
+    ["c11","mask_wings"], ["c12","mask_edge"], ["c13","mask_cluster"], ["c14","err_scale"]
+  ],
+  "stress_settings": {
+    "pure_point_flux": 1.5,
+    "width_increment_per_axis": 0.045,
+    "wing_fraction": 0.04,
+    "wing_width_factor": 2,
+    "ellipticity_width_shift": 0.05,
+    "centroid_x_shift": 0.08,
+    "sky_gradient_per_x_pixel": 0.003,
+    "neighbor_flux": 0.18,
+    "neighbor_offset_xy": [-2, 1],
+    "err_scale": 0.8
+  },
+  "stamp_shape": [7,8],
+  "centroid_xy": [0.17,-0.23],
+  "host_q": 0.67,
+  "host_pa": 32,
+  "finite_neighbor_corr": 0.14,
+  "synthetic_only": true
+}

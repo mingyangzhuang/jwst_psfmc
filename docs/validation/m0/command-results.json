@@ -1,0 +1,48 @@
+[
+  {
+    "step": "online extras install (Python 3.13.1)",
+    "exit_code": 1,
+    "reason": "PyPI/build dependency DNS unavailable",
+    "log": "install.log"
+  },
+  {
+    "step": "offline editable install (Python 3.12.11)",
+    "exit_code": 0,
+    "log": "offline-install.log"
+  },
+  {
+    "step": "original suite",
+    "exit_code": 0,
+    "passed": 113,
+    "skipped": 1,
+    "failed": 0,
+    "log": "original-suite.log"
+  },
+  {
+    "step": "M0 suite",
+    "exit_code": 0,
+    "passed": 8,
+    "skipped": 0,
+    "failed": 0,
+    "log": "m0-suite.log"
+  },
+  {
+    "step": "pip check",
+    "exit_code": 0,
+    "log": "pip-check.log"
+  },
+  {
+    "step": "original covariance notebook",
+    "exit_code": 1,
+    "executed_code_cells": 0,
+    "reason": "sandbox local port bind denied",
+    "log": "notebook-covariance.log"
+  },
+  {
+    "step": "original photometry notebook",
+    "exit_code": 1,
+    "executed_code_cells": 0,
+    "reason": "sandbox local port bind denied",
+    "log": "notebook-photometry.log"
+  }
+]

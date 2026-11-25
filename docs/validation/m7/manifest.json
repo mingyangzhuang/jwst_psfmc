@@ -1,0 +1,3292 @@
+{
+  "status": "completed",
+  "run": {
+    "baseline_commit": "38f0834d5fdd977c9c761907d0ab59a82bc5ae90",
+    "code_commit": "38f0834d5fdd977c9c761907d0ab59a82bc5ae90",
+    "package_snapshot_sha256": "1bee7419efa5f1b43ba90803c94f40854d7f3f3d6d052324bdda66d6816013c8",
+    "design_sha256": "6a8e339883f8e1799df25a01f58f190330bac58118854eb7e8a302a16539b627",
+    "runner_sha256": "4b2efa2a79259d8e25398a5ed6884a4d90fe1446e89fbd838b41422ac83d0c7c",
+    "reference_sha256": "8dad91e64d29365d66eb28b99187d7cb23406613b66d8ff858777cc8e37ac5f5",
+    "dirty": true,
+    "python": "3.12.11",
+    "numpy": "2.5.3",
+    "synthetic_only": true,
+    "scipy": "1.18.1",
+    "astropy": "8.0.1",
+    "emcee": "3.1.6"
+  },
+  "acceptance": {
+    "passes": true,
+    "checks": [
+      {
+        "family": "numeric",
+        "case": "a01",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.00980677603100125,
+        "reference_epsilon": 3.7710221595036904e-15
+      },
+      {
+        "family": "numeric",
+        "case": "a02",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.022426985253134097,
+        "reference_epsilon": 4.62085056719569e-15
+      },
+      {
+        "family": "numeric",
+        "case": "a03",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.004018432882194477,
+        "reference_epsilon": 2.422286953057046e-15
+      },
+      {
+        "family": "numeric",
+        "case": "a04",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.023721421950882494,
+        "reference_epsilon": 2.778920705787353e-15
+      },
+      {
+        "family": "numeric",
+        "case": "a05",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.01558033024811717,
+        "reference_epsilon": 2.7127153113602416e-15
+      },
+      {
+        "family": "numeric",
+        "case": "a06",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.00486744116618191,
+        "reference_epsilon": 1.174818506460475e-15
+      },
+      {
+        "family": "numeric",
+        "case": "a07",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.005589638326644911,
+        "reference_epsilon": 1.6432698449523704e-15
+      },
+      {
+        "family": "numeric",
+        "case": "a08",
+        "passes": true,
+        "completed": 1,
+        "expected": 1,
+        "epsilon": 0.025041255145532824,
+        "reference_epsilon": 2.408505974932178e-15
+      },
+      {
+        "family": "sbc",
+        "case": "b01",
+        "passes": true,
+        "parameter": "log_likelihood",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.7505510447801341,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b01",
+        "passes": true,
+        "parameter": "point.aperture_flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.32833592267803724,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b01",
+        "passes": true,
+        "parameter": "point.flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.32833592267803724,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b01",
+        "passes": true,
+        "parameter": "sky.level",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.7282825982992867,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b02",
+        "passes": true,
+        "parameter": "host.aperture_flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.30469813473293117,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b02",
+        "passes": true,
+        "parameter": "host.flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.30469813473293117,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b02",
+        "passes": true,
+        "parameter": "log_likelihood",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.3358921265085725,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b02",
+        "passes": true,
+        "parameter": "sky.level",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.7320217659262374,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b03",
+        "passes": true,
+        "parameter": "host.aperture_flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.19432631818747315,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b03",
+        "passes": true,
+        "parameter": "host.flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.19432631818747315,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b03",
+        "passes": true,
+        "parameter": "log_likelihood",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.15947088274298676,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b03",
+        "passes": true,
+        "parameter": "point.aperture_flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.7376915197696194,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b03",
+        "passes": true,
+        "parameter": "point.flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.7376915197696194,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b03",
+        "passes": true,
+        "parameter": "sky.level",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.30398649328520083,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b06",
+        "passes": true,
+        "parameter": "host.aperture_flux",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.5383611057146909,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b06",
+        "passes": true,
+        "parameter": "host.re",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.4802885152108024,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "sbc",
+        "case": "b06",
+        "passes": true,
+        "parameter": "host.re_circ",
+        "completed": 120,
+        "expected": 120,
+        "pvalue": 0.4802885152108024,
+        "threshold": 0.0029411764705882353
+      },
+      {
+        "family": "radius_refinement",
+        "case": "b06",
+        "passes": true,
+        "max_cdf_difference": 5.719967190276343e-05
+      },
+      {
+        "family": "fixed_truth",
+        "case": "b01",
+        "passes": true,
+        "completed": 120,
+        "expected": 120,
+        "coverage68": 0.7166666666666667,
+        "coverage95": 0.9666666666666667,
+        "standardized_bias": 0.07541722863957176
+      },
+      {
+        "family": "fixed_truth",
+        "case": "b02",
+        "passes": true,
+        "completed": 120,
+        "expected": 120,
+        "coverage68": 0.65,
+        "coverage95": 0.9666666666666667,
+        "standardized_bias": -0.08752023371609498
+      },
+      {
+        "family": "fixed_truth",
+        "case": "b03",
+        "passes": true,
+        "completed": 120,
+        "expected": 120,
+        "coverage68": 0.675,
+        "coverage95": 0.9666666666666667,
+        "standardized_bias": 0.07759425372421713
+      },
+      {
+        "family": "sampler_parity",
+        "case": "b01",
+        "passes": true,
+        "sampler": "emcee",
+        "status": "converged",
+        "max_combined_mcse": 0.3340155133362517,
+        "threshold": 5
+      },
+      {
+        "family": "sampler_parity",
+        "case": "b02",
+        "passes": true,
+        "sampler": "emcee",
+        "status": "converged",
+        "max_combined_mcse": 1.256305408056316,
+        "threshold": 5
+      },
+      {
+        "family": "sampler_parity",
+        "case": "b03",
+        "passes": true,
+        "sampler": "emcee",
+        "status": "converged",
+        "max_combined_mcse": 1.203036815999715,
+        "threshold": 5
+      },
+      {
+        "family": "sampler_parity",
+        "case": "b03",
+        "passes": true,
+        "sampler": "nautilus",
+        "status": "converged",
+        "max_combined_mcse": 1.8716364725341461,
+        "threshold": 5
+      }
+    ]
+  },
+  "numeric": [
+    {
+      "id": "a01",
+      "group": "core",
+      "kind": "effective",
+      "n": 0.5,
+      "re": 1,
+      "q": 0.7,
+      "pa": 0,
+      "dx": 0,
+      "dy": 0,
+      "contrast": 0,
+      "host_sn": 50,
+      "epsilon": 0.00980677603100125,
+      "reference_epsilon": 3.7710221595036904e-15,
+      "stamp_flux_error": -1.7328257856386031e-06,
+      "runtime_s": 0.04589595799916424,
+      "psf_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+      "passes_budget": true
+    },
+    {
+      "id": "a02",
+      "group": "core",
+      "kind": "pre_pixel",
+      "n": 0.5,
+      "re": 1,
+      "q": 0.4,
+      "pa": 30,
+      "dx": 0.25,
+      "dy": -0.5,
+      "contrast": 0.5,
+      "host_sn": 20,
+      "epsilon": 0.022426985253134097,
+      "reference_epsilon": 4.62085056719569e-15,
+      "stamp_flux_error": -6.6242044525210986e-06,
+      "runtime_s": 0.0437685419965419,
+      "psf_sha256": "1a395d9a71ce42ebcdcfe2f8d40a9f0425e11cc0fd32d13a69f1c2340b68a488",
+      "passes_budget": true
+    },
+    {
+      "id": "a03",
+      "group": "core",
+      "kind": "effective",
+      "n": 1,
+      "re": 1,
+      "q": 0.7,
+      "pa": 30,
+      "dx": 0.25,
+      "dy": -0.25,
+      "contrast": 2,
+      "host_sn": 20,
+      "epsilon": 0.004018432882194477,
+      "reference_epsilon": 2.422286953057046e-15,
+      "stamp_flux_error": -5.294761630914024e-06,
+      "runtime_s": 0.037333542000851594,
+      "psf_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+      "passes_budget": true
+    },
+    {
+      "id": "a04",
+      "group": "core",
+      "kind": "pre_pixel",
+      "n": 1,
+      "re": 3,
+      "q": 0.7,
+      "pa": 89,
+      "dx": 0,
+      "dy": 0.25,
+      "contrast": 0.5,
+      "host_sn": 20,
+      "epsilon": 0.023721421950882494,
+      "reference_epsilon": 2.778920705787353e-15,
+      "stamp_flux_error": -3.67709279036621e-05,
+      "runtime_s": 0.038639833001070656,
+      "psf_sha256": "1a395d9a71ce42ebcdcfe2f8d40a9f0425e11cc0fd32d13a69f1c2340b68a488",
+      "passes_budget": true
+    },
+    {
+      "id": "a05",
+      "group": "core",
+      "kind": "effective",
+      "n": 2,
+      "re": 1,
+      "q": 1,
+      "pa": 0,
+      "dx": 0.49,
+      "dy": -0.5,
+      "contrast": 0.5,
+      "host_sn": 20,
+      "epsilon": 0.01558033024811717,
+      "reference_epsilon": 2.7127153113602416e-15,
+      "stamp_flux_error": -1.3541567885688721e-05,
+      "runtime_s": 0.03472570799931418,
+      "psf_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+      "passes_budget": true
+    },
+    {
+      "id": "a06",
+      "group": "core",
+      "kind": "pre_pixel",
+      "n": 2,
+      "re": 0.3,
+      "q": 0.4,
+      "pa": 30,
+      "dx": 0.25,
+      "dy": 0,
+      "contrast": 0,
+      "host_sn": 5,
+      "epsilon": 0.00486744116618191,
+      "reference_epsilon": 1.174818506460475e-15,
+      "stamp_flux_error": -1.1669320487683876e-06,
+      "runtime_s": 0.03995158400357468,
+      "psf_sha256": "1a395d9a71ce42ebcdcfe2f8d40a9f0425e11cc0fd32d13a69f1c2340b68a488",
+      "passes_budget": true
+    },
+    {
+      "id": "a07",
+      "group": "core",
+      "kind": "effective",
+      "n": 4,
+      "re": 0.3,
+      "q": 0.4,
+      "pa": 89,
+      "dx": 0.25,
+      "dy": -0.25,
+      "contrast": 2,
+      "host_sn": 20,
+      "epsilon": 0.005589638326644911,
+      "reference_epsilon": 1.6432698449523704e-15,
+      "stamp_flux_error": -4.9767578991222194e-06,
+      "runtime_s": 0.044390375005605165,
+      "psf_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+      "passes_budget": true
+    },
+    {
+      "id": "a08",
+      "group": "core",
+      "kind": "pre_pixel",
+      "n": 4,
+      "re": 1,
+      "q": 0.7,
+      "pa": 30,
+      "dx": 0,
+      "dy": 0,
+      "contrast": 0.5,
+      "host_sn": 20,
+      "epsilon": 0.025041255145532824,
+      "reference_epsilon": 2.408505974932178e-15,
+      "stamp_flux_error": -1.721701677226406e-05,
+      "runtime_s": 0.037909165999735706,
+      "psf_sha256": "1a395d9a71ce42ebcdcfe2f8d40a9f0425e11cc0fd32d13a69f1c2340b68a488",
+      "passes_budget": true
+    },
+    {
+      "id": "a09",
+      "group": "boundary",
+      "kind": "effective",
+      "n": 4,
+      "re": 0.03,
+      "q": 0.3,
+      "pa": 49,
+      "dx": 0.49,
+      "dy": -0.5,
+      "contrast": 0,
+      "host_sn": 50,
+      "epsilon": 0.029346705143626438,
+      "reference_epsilon": 4.086876653836267e-15,
+      "stamp_flux_error": 1.8987484395882603e-07,
+      "runtime_s": 0.03565600000001723,
+      "psf_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+      "passes_budget": true
+    },
+    {
+      "id": "a10",
+      "group": "boundary",
+      "kind": "pre_pixel",
+      "n": 4,
+      "re": 3,
+      "q": 0.4,
+      "pa": 89,
+      "dx": 0.49,
+      "dy": 0.49,
+      "contrast": 2,
+      "host_sn": 50,
+      "epsilon": 0.2215990777007443,
+      "reference_epsilon": 6.802049515151312e-15,
+      "stamp_flux_error": -2.038285128236339e-05,
+      "runtime_s": 0.041896374998032115,
+      "psf_sha256": "1a395d9a71ce42ebcdcfe2f8d40a9f0425e11cc0fd32d13a69f1c2340b68a488",
+      "passes_budget": false
+    },
+    {
+      "id": "a11",
+      "group": "boundary",
+      "kind": "effective",
+      "n": 1,
+      "re": 1,
+      "q": 0.7,
+      "pa": 0,
+      "dx": 0.17,
+      "dy": -0.23,
+      "contrast": 10,
+      "host_sn": 50,
+      "epsilon": 0.6599961261633498,
+      "reference_epsilon": 4.415219444328495e-15,
+      "stamp_flux_error": -1.926688119979758e-05,
+      "runtime_s": 0.042813375002879184,
+      "psf_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+      "passes_budget": false
+    },
+    {
+      "id": "a12",
+      "group": "boundary",
+      "kind": "pre_pixel",
+      "n": 4,
+      "re": 0.18,
+      "q": 0.39,
+      "pa": 61,
+      "dx": 0.17,
+      "dy": -0.23,
+      "contrast": 2,
+      "host_sn": 300,
+      "epsilon": 0.7310920235927129,
+      "reference_epsilon": 3.018108292612573e-14,
+      "stamp_flux_error": -3.4370213581880193e-06,
+      "runtime_s": 0.04457808399456553,
+      "psf_sha256": "1a395d9a71ce42ebcdcfe2f8d40a9f0425e11cc0fd32d13a69f1c2340b68a488",
+      "passes_budget": false
+    }
+  ],
+  "inference": [
+    {
+      "id": "b01",
+      "group": "core",
+      "model": "point",
+      "noise": {
+        "backend": "diagonal",
+        "boundary": "independent",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "host_sn": 20,
+      "truth": [
+        1,
+        0,
+        0.02
+      ],
+      "re": 1,
+      "n": 0.5,
+      "sigma": 0.01762801431886317,
+      "parameters": {
+        "version": 1,
+        "parameters": [
+          {
+            "name": "point.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": -1.0,
+              "hi": 4.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "sky.level",
+            "initial": 0.0,
+            "unit": "",
+            "prior": {
+              "lo": -0.12,
+              "hi": 0.12,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          }
+        ],
+        "free_names": [
+          "point.flux",
+          "sky.level"
+        ]
+      },
+      "render_config": {
+        "response_kind": "effective",
+        "sample_shape": [
+          129,
+          129
+        ],
+        "spacing_native_pixels": 0.0625,
+        "origin_xy": [
+          64.0,
+          64.0
+        ],
+        "tabulated_support_xy": [
+          [
+            -4.0,
+            4.0
+          ],
+          [
+            -4.0,
+            4.0
+          ]
+        ],
+        "normalization_reference": "analytic total flux",
+        "calibration_scale": 1.0,
+        "psf_support_fraction": null,
+        "source": "synthetic separable Gaussian",
+        "samples_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+        "native_pixel_scale_arcsec": null,
+        "sample_scale_arcsec": null,
+        "source_oversamp": 16,
+        "max_offset_native_pixels": 0.5,
+        "max_source_cells": 500000,
+        "interpolation": "bilinear",
+        "boundary": "zero_outside_tabulated_support"
+      },
+      "psf_fwhm_geomean_native": 1.7476509194971812
+    },
+    {
+      "id": "b02",
+      "group": "core",
+      "model": "host",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "host_sn": 20,
+      "truth": [
+        0,
+        1,
+        0.02
+      ],
+      "re": 1.1,
+      "n": 1,
+      "sigma": 0.009899685995621386,
+      "parameters": {
+        "version": 1,
+        "parameters": [
+          {
+            "name": "host.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": 0.0,
+              "hi": 3.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.re",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 1.1,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.n",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 1.0,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.q",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.67,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.pa",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 32.0,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "sky.level",
+            "initial": 0.0,
+            "unit": "",
+            "prior": {
+              "lo": -0.12,
+              "hi": 0.12,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          }
+        ],
+        "free_names": [
+          "host.flux",
+          "sky.level"
+        ]
+      },
+      "render_config": {
+        "response_kind": "effective",
+        "sample_shape": [
+          129,
+          129
+        ],
+        "spacing_native_pixels": 0.0625,
+        "origin_xy": [
+          64.0,
+          64.0
+        ],
+        "tabulated_support_xy": [
+          [
+            -4.0,
+            4.0
+          ],
+          [
+            -4.0,
+            4.0
+          ]
+        ],
+        "normalization_reference": "analytic total flux",
+        "calibration_scale": 1.0,
+        "psf_support_fraction": null,
+        "source": "synthetic separable Gaussian",
+        "samples_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+        "native_pixel_scale_arcsec": null,
+        "sample_scale_arcsec": null,
+        "source_oversamp": 16,
+        "max_offset_native_pixels": 0.5,
+        "max_source_cells": 500000,
+        "interpolation": "bilinear",
+        "boundary": "zero_outside_tabulated_support"
+      },
+      "psf_fwhm_geomean_native": 1.7476509194971812
+    },
+    {
+      "id": "b03",
+      "group": "core",
+      "model": "composite",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "host_sn": 30,
+      "truth": [
+        1.5,
+        1,
+        0.02
+      ],
+      "re": 1.4,
+      "n": 0.5,
+      "sigma": 0.006066264272601171,
+      "parameters": {
+        "version": 1,
+        "parameters": [
+          {
+            "name": "point.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": -1.0,
+              "hi": 4.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": 0.0,
+              "hi": 3.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.re",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 1.4,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.n",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.5,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.q",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.67,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.pa",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 32.0,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "sky.level",
+            "initial": 0.0,
+            "unit": "",
+            "prior": {
+              "lo": -0.12,
+              "hi": 0.12,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          }
+        ],
+        "free_names": [
+          "point.flux",
+          "host.flux",
+          "sky.level"
+        ]
+      },
+      "render_config": {
+        "response_kind": "effective",
+        "sample_shape": [
+          129,
+          129
+        ],
+        "spacing_native_pixels": 0.0625,
+        "origin_xy": [
+          64.0,
+          64.0
+        ],
+        "tabulated_support_xy": [
+          [
+            -4.0,
+            4.0
+          ],
+          [
+            -4.0,
+            4.0
+          ]
+        ],
+        "normalization_reference": "analytic total flux",
+        "calibration_scale": 1.0,
+        "psf_support_fraction": null,
+        "source": "synthetic separable Gaussian",
+        "samples_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+        "native_pixel_scale_arcsec": null,
+        "sample_scale_arcsec": null,
+        "source_oversamp": 16,
+        "max_offset_native_pixels": 0.5,
+        "max_source_cells": 500000,
+        "interpolation": "bilinear",
+        "boundary": "zero_outside_tabulated_support"
+      },
+      "psf_fwhm_geomean_native": 1.7476509194971812
+    },
+    {
+      "id": "b04",
+      "group": "boundary",
+      "model": "composite",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "host_sn": 5,
+      "truth": [
+        1.5,
+        0,
+        0.02
+      ],
+      "re": 1.4,
+      "n": 0.5,
+      "sigma": 0.03639758563560703,
+      "parameters": {
+        "version": 1,
+        "parameters": [
+          {
+            "name": "point.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": -1.0,
+              "hi": 4.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": 0.0,
+              "hi": 3.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.re",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 1.4,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.n",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.5,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.q",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.67,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.pa",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 32.0,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "sky.level",
+            "initial": 0.0,
+            "unit": "",
+            "prior": {
+              "lo": -0.12,
+              "hi": 0.12,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          }
+        ],
+        "free_names": [
+          "point.flux",
+          "host.flux",
+          "sky.level"
+        ]
+      },
+      "render_config": {
+        "response_kind": "effective",
+        "sample_shape": [
+          129,
+          129
+        ],
+        "spacing_native_pixels": 0.0625,
+        "origin_xy": [
+          64.0,
+          64.0
+        ],
+        "tabulated_support_xy": [
+          [
+            -4.0,
+            4.0
+          ],
+          [
+            -4.0,
+            4.0
+          ]
+        ],
+        "normalization_reference": "analytic total flux",
+        "calibration_scale": 1.0,
+        "psf_support_fraction": null,
+        "source": "synthetic separable Gaussian",
+        "samples_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+        "native_pixel_scale_arcsec": null,
+        "sample_scale_arcsec": null,
+        "source_oversamp": 16,
+        "max_offset_native_pixels": 0.5,
+        "max_source_cells": 500000,
+        "interpolation": "bilinear",
+        "boundary": "zero_outside_tabulated_support"
+      },
+      "psf_fwhm_geomean_native": 1.7476509194971812
+    },
+    {
+      "id": "b05",
+      "group": "boundary",
+      "model": "composite",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "host_sn": 20,
+      "truth": [
+        1.5,
+        1,
+        0.02
+      ],
+      "re": 0.03,
+      "n": 0.5,
+      "sigma": 0.015111012221485223,
+      "parameters": {
+        "version": 1,
+        "parameters": [
+          {
+            "name": "point.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": -1.0,
+              "hi": 4.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "point.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.flux",
+            "initial": 1.5,
+            "unit": "",
+            "prior": {
+              "lo": 0.0,
+              "hi": 3.0,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dx",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.17,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.dy",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": -0.23,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.re",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.03,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.n",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.5,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.q",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 0.67,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "host.pa",
+            "initial": null,
+            "unit": "",
+            "prior": null,
+            "fixed": 32.0,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          },
+          {
+            "name": "sky.level",
+            "initial": 0.0,
+            "unit": "",
+            "prior": {
+              "lo": -0.12,
+              "hi": 0.12,
+              "kind": "Uniform"
+            },
+            "fixed": null,
+            "tie": null,
+            "transform": "linear",
+            "bounds": null,
+            "period": null,
+            "origin": null
+          }
+        ],
+        "free_names": [
+          "point.flux",
+          "host.flux",
+          "sky.level"
+        ]
+      },
+      "render_config": {
+        "response_kind": "effective",
+        "sample_shape": [
+          129,
+          129
+        ],
+        "spacing_native_pixels": 0.0625,
+        "origin_xy": [
+          64.0,
+          64.0
+        ],
+        "tabulated_support_xy": [
+          [
+            -4.0,
+            4.0
+          ],
+          [
+            -4.0,
+            4.0
+          ]
+        ],
+        "normalization_reference": "analytic total flux",
+        "calibration_scale": 1.0,
+        "psf_support_fraction": null,
+        "source": "synthetic separable Gaussian",
+        "samples_sha256": "bcbf7787fff9a19032e9de65863a99208be3fa74447f24376005aa6b96df742d",
+        "native_pixel_scale_arcsec": null,
+        "sample_scale_arcsec": null,
+        "source_oversamp": 16,
+        "max_offset_native_pixels": 0.5,
+        "max_source_cells": 500000,
+        "interpolation": "bilinear",
+        "boundary": "zero_outside_tabulated_support"
+      },
+      "psf_fwhm_geomean_native": 1.7476509194971812
+    }
+  ],
+  "robustness": [
+    {
+      "id": "c01",
+      "kind": "matched",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c02",
+      "kind": "wider_psf",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c03",
+      "kind": "psf_wings",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c04",
+      "kind": "psf_ellipticity",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c05",
+      "kind": "psf_centroid",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c06",
+      "kind": "background_gradient",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c07",
+      "kind": "neighbor",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c08",
+      "kind": "non_sersic_host",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c09",
+      "kind": "finite_as_periodic",
+      "noise": {
+        "backend": "fft_periodic",
+        "boundary": "periodic",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": [],
+        "spectrum": {
+          "raw_min": 0.4677287169873226,
+          "raw_max": 1.56,
+          "floor": null,
+          "clipped_fraction": 0.0
+        },
+        "kernel_max_abs_adjustment": 0.0
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0051671158563422,
+        1.0129950256754567,
+        1.0441706870732155
+      ],
+      "observed_pixels": 56
+    },
+    {
+      "id": "c10",
+      "kind": "mask_core",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "exact_marginal",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 54,
+        "n_invalid": 2,
+        "invalid_pixels": [
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ]
+        ]
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 54
+    },
+    {
+      "id": "c11",
+      "kind": "mask_wings",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "exact_marginal",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 49,
+        "n_invalid": 7,
+        "invalid_pixels": [
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            4
+          ]
+        ]
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 49
+    },
+    {
+      "id": "c12",
+      "kind": "mask_edge",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "exact_marginal",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 49,
+        "n_invalid": 7,
+        "invalid_pixels": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            5,
+            0
+          ],
+          [
+            6,
+            0
+          ]
+        ]
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 49
+    },
+    {
+      "id": "c13",
+      "kind": "mask_cluster",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "exact_marginal",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 52,
+        "n_invalid": 4,
+        "invalid_pixels": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      "effective_sd_ratio_point_host_sky": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "observed_pixels": 52
+    },
+    {
+      "id": "c14",
+      "kind": "err_scale",
+      "noise": {
+        "backend": "dense",
+        "boundary": "explicit",
+        "error_kind": "unspecified",
+        "normalization": "absolute",
+        "mask_mode": "full_grid",
+        "weight_mode": "none",
+        "approximate": false,
+        "shape": [
+          7,
+          8
+        ],
+        "n_valid": 56,
+        "n_invalid": 0,
+        "invalid_pixels": []
+      },
+      "effective_sd_ratio_point_host_sky": [
+        0.8,
+        0.7999999999999995,
+        0.7999999999999995
+      ],
+      "observed_pixels": 56
+    }
+  ],
+  "sbc": [
+    {
+      "case": "b01",
+      "parameter": "log_likelihood",
+      "histogram": [
+        19,
+        11,
+        11,
+        13,
+        8,
+        11,
+        10,
+        13,
+        12,
+        12
+      ],
+      "n": 120,
+      "pvalue": 0.7505510447801341,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b01",
+      "parameter": "point.aperture_flux",
+      "histogram": [
+        19,
+        7,
+        9,
+        16,
+        10,
+        16,
+        10,
+        12,
+        10,
+        11
+      ],
+      "n": 120,
+      "pvalue": 0.32833592267803724,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b01",
+      "parameter": "point.flux",
+      "histogram": [
+        19,
+        7,
+        9,
+        16,
+        10,
+        16,
+        10,
+        12,
+        10,
+        11
+      ],
+      "n": 120,
+      "pvalue": 0.32833592267803724,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b01",
+      "parameter": "sky.level",
+      "histogram": [
+        14,
+        12,
+        8,
+        10,
+        13,
+        7,
+        14,
+        16,
+        12,
+        14
+      ],
+      "n": 120,
+      "pvalue": 0.7282825982992867,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b02",
+      "parameter": "host.aperture_flux",
+      "histogram": [
+        13,
+        12,
+        7,
+        13,
+        18,
+        12,
+        17,
+        13,
+        7,
+        8
+      ],
+      "n": 120,
+      "pvalue": 0.30469813473293117,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b02",
+      "parameter": "host.flux",
+      "histogram": [
+        13,
+        12,
+        7,
+        13,
+        18,
+        12,
+        17,
+        13,
+        7,
+        8
+      ],
+      "n": 120,
+      "pvalue": 0.30469813473293117,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b02",
+      "parameter": "log_likelihood",
+      "histogram": [
+        16,
+        8,
+        10,
+        12,
+        15,
+        9,
+        13,
+        8,
+        19,
+        10
+      ],
+      "n": 120,
+      "pvalue": 0.3358921265085725,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b02",
+      "parameter": "sky.level",
+      "histogram": [
+        11,
+        15,
+        12,
+        15,
+        10,
+        13,
+        13,
+        6,
+        15,
+        10
+      ],
+      "n": 120,
+      "pvalue": 0.7320217659262374,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b03",
+      "parameter": "host.aperture_flux",
+      "histogram": [
+        10,
+        13,
+        15,
+        13,
+        9,
+        6,
+        10,
+        15,
+        20,
+        9
+      ],
+      "n": 120,
+      "pvalue": 0.19432631818747315,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b03",
+      "parameter": "host.flux",
+      "histogram": [
+        10,
+        13,
+        15,
+        13,
+        9,
+        6,
+        10,
+        15,
+        20,
+        9
+      ],
+      "n": 120,
+      "pvalue": 0.19432631818747315,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b03",
+      "parameter": "log_likelihood",
+      "histogram": [
+        4,
+        12,
+        17,
+        19,
+        12,
+        13,
+        13,
+        11,
+        8,
+        11
+      ],
+      "n": 120,
+      "pvalue": 0.15947088274298676,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b03",
+      "parameter": "point.aperture_flux",
+      "histogram": [
+        9,
+        18,
+        13,
+        14,
+        10,
+        11,
+        13,
+        8,
+        12,
+        12
+      ],
+      "n": 120,
+      "pvalue": 0.7376915197696194,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b03",
+      "parameter": "point.flux",
+      "histogram": [
+        9,
+        18,
+        13,
+        14,
+        10,
+        11,
+        13,
+        8,
+        12,
+        12
+      ],
+      "n": 120,
+      "pvalue": 0.7376915197696194,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b03",
+      "parameter": "sky.level",
+      "histogram": [
+        7,
+        11,
+        19,
+        12,
+        10,
+        12,
+        18,
+        12,
+        10,
+        9
+      ],
+      "n": 120,
+      "pvalue": 0.30398649328520083,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b06",
+      "parameter": "host.aperture_flux",
+      "histogram": [
+        10,
+        16,
+        11,
+        8,
+        17,
+        10,
+        11,
+        9,
+        12,
+        16
+      ],
+      "n": 120,
+      "pvalue": 0.5383611057146909,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b06",
+      "parameter": "host.re",
+      "histogram": [
+        16,
+        13,
+        8,
+        11,
+        11,
+        16,
+        8,
+        11,
+        17,
+        9
+      ],
+      "n": 120,
+      "pvalue": 0.4802885152108024,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    },
+    {
+      "case": "b06",
+      "parameter": "host.re_circ",
+      "histogram": [
+        16,
+        13,
+        8,
+        11,
+        11,
+        16,
+        8,
+        11,
+        17,
+        9
+      ],
+      "n": 120,
+      "pvalue": 0.4802885152108024,
+      "threshold": 0.0029411764705882353,
+      "passes": true
+    }
+  ],
+  "metrics": [
+    {
+      "case": "b01",
+      "family": "fixed_truth",
+      "successful": 120,
+      "attempts": 120,
+      "mean_bias": 0.004098394024448787,
+      "bias_over_posterior_sd": 0.07541722863957176,
+      "coverage68": 0.7166666666666667,
+      "ci68": [
+        0.6302979754694596,
+        0.7895937190824355
+      ],
+      "coverage95": 0.9666666666666667,
+      "ci95": [
+        0.917419662440894,
+        0.9869624489016494
+      ],
+      "median_width68": 0.1070102532784124,
+      "median_q95": 1.092679898340743,
+      "passes": true
+    },
+    {
+      "case": "b02",
+      "family": "fixed_truth",
+      "successful": 120,
+      "attempts": 120,
+      "mean_bias": -0.005147490351436015,
+      "bias_over_posterior_sd": -0.08752023371609498,
+      "coverage68": 0.65,
+      "ci68": [
+        0.561213245977243,
+        0.729481004097146
+      ],
+      "coverage95": 0.9666666666666667,
+      "ci95": [
+        0.917419662440894,
+        0.9869624489016494
+      ],
+      "median_width68": 0.1169309894685111,
+      "median_q95": 1.0929208097098062,
+      "passes": true
+    },
+    {
+      "case": "b03",
+      "family": "fixed_truth",
+      "successful": 120,
+      "attempts": 120,
+      "mean_bias": 0.006715389197333755,
+      "bias_over_posterior_sd": 0.07759425372421713,
+      "coverage68": 0.675,
+      "ci68": [
+        0.5869018408594733,
+        0.7522414508939805
+      ],
+      "coverage95": 0.9666666666666667,
+      "ci95": [
+        0.917419662440894,
+        0.9869624489016494
+      ],
+      "median_width68": 0.1714428583038511,
+      "median_q95": 1.1409158541066273,
+      "passes": true
+    },
+    {
+      "case": "b04",
+      "family": "fixed_truth",
+      "successful": 120,
+      "attempts": 120,
+      "mean_bias": 0.389781800057149,
+      "bias_over_posterior_sd": 1.3008698840824315,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.031019166418703482
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.031019166418703482
+      ],
+      "median_width68": 0.5937139898805599,
+      "median_q95": 0.972115613497546
+    },
+    {
+      "case": "b05",
+      "family": "fixed_truth",
+      "successful": 120,
+      "attempts": 120,
+      "mean_bias": 0.4956798372716052,
+      "bias_over_posterior_sd": 0.5737066386856282,
+      "coverage68": 1.0,
+      "ci68": [
+        0.9689808335812965,
+        1.0
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.9689808335812965,
+        1.0
+      ],
+      "median_width68": 2.0314495457563004,
+      "median_q95": 2.843586047534911
+    },
+    {
+      "case": "c01",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.13182456708841325,
+      "bias_over_posterior_sd": 1.2448754097721446,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.32440756488388023
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.32440756488388023
+      ],
+      "median_width68": 0.21582002866035221,
+      "median_q95": 0.3372424198826196
+    },
+    {
+      "case": "c02",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.28384536850312025,
+      "bias_over_posterior_sd": 1.865064817271401,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.32440756488388023
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.32440756488388023
+      ],
+      "median_width68": 0.3048372388721291,
+      "median_q95": 0.5711026400639484
+    },
+    {
+      "case": "c03",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.15507863038330907,
+      "bias_over_posterior_sd": 1.3468538881762704,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.32440756488388023
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.32440756488388023
+      ],
+      "median_width68": 0.23982348480794902,
+      "median_q95": 0.372820427246019
+    },
+    {
+      "case": "c04",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.16971353943474887,
+      "bias_over_posterior_sd": 1.4218980688657457,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.32440756488388023
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.32440756488388023
+      ],
+      "median_width68": 0.2440538423371067,
+      "median_q95": 0.4012855119610136
+    },
+    {
+      "case": "c05",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.12829819956074653,
+      "bias_over_posterior_sd": 1.2474515596082285,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.32440756488388023
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.32440756488388023
+      ],
+      "median_width68": 0.2077148053188593,
+      "median_q95": 0.3355977128758394
+    },
+    {
+      "case": "c06",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.14838312997456662,
+      "bias_over_posterior_sd": 1.3195737259056333,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.32440756488388023
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.32440756488388023
+      ],
+      "median_width68": 0.2317918961696817,
+      "median_q95": 0.36377243892146105
+    },
+    {
+      "case": "c07",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.15141644601900278,
+      "bias_over_posterior_sd": 1.3376492268871556,
+      "coverage68": 0.0,
+      "ci68": [
+        0.0,
+        0.32440756488388023
+      ],
+      "coverage95": 0.0,
+      "ci95": [
+        0.0,
+        0.32440756488388023
+      ],
+      "median_width68": 0.23632477136244723,
+      "median_q95": 0.36893420643115604
+    },
+    {
+      "case": "c08",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": -0.020215665970998206,
+      "bias_over_posterior_sd": -0.1188148636204346,
+      "coverage68": 0.5,
+      "ci68": [
+        0.21521606221387757,
+        0.7847839377861224
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "median_width68": 0.3354146728912687,
+      "median_q95": 1.2969111993378468
+    },
+    {
+      "case": "c09",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": -0.013757924898234616,
+      "bias_over_posterior_sd": -0.07982246664522785,
+      "coverage68": 0.625,
+      "ci68": [
+        0.3057423946026273,
+        0.8631557141764027
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "median_width68": 0.3396421434590764,
+      "median_q95": 1.3078333117581016
+    },
+    {
+      "case": "c10",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.020792221364687447,
+      "bias_over_posterior_sd": 0.11132384973235186,
+      "coverage68": 0.375,
+      "ci68": [
+        0.13684428582359737,
+        0.6942576053973728
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "median_width68": 0.37093393647676676,
+      "median_q95": 1.411886752447111
+    },
+    {
+      "case": "c11",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": 0.025161232761026053,
+      "bias_over_posterior_sd": 0.12994607950245418,
+      "coverage68": 0.625,
+      "ci68": [
+        0.3057423946026273,
+        0.8631557141764027
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "median_width68": 0.3747887288252322,
+      "median_q95": 1.356661474511081
+    },
+    {
+      "case": "c12",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": -0.028774668923220142,
+      "bias_over_posterior_sd": -0.1623009610908992,
+      "coverage68": 0.5,
+      "ci68": [
+        0.21521606221387757,
+        0.7847839377861224
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "median_width68": 0.3485470958296923,
+      "median_q95": 1.2982584511450277
+    },
+    {
+      "case": "c13",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": -0.015046778420601065,
+      "bias_over_posterior_sd": -0.08337390333675998,
+      "coverage68": 0.625,
+      "ci68": [
+        0.3057423946026273,
+        0.8631557141764027
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "median_width68": 0.3505091497588227,
+      "median_q95": 1.3030433204514453
+    },
+    {
+      "case": "c14",
+      "family": "stress",
+      "successful": 8,
+      "attempts": 8,
+      "mean_bias": -0.013319783245067843,
+      "bias_over_posterior_sd": -0.09785654798529139,
+      "coverage68": 0.5,
+      "ci68": [
+        0.21521606221387757,
+        0.7847839377861224
+      ],
+      "coverage95": 1.0,
+      "ci95": [
+        0.6755924351161198,
+        1.0
+      ],
+      "median_width68": 0.2683317383130149,
+      "median_q95": 1.2474602413946578
+    }
+  ],
+  "samplers": [
+    {
+      "case": "b01",
+      "sampler": "emcee",
+      "status": "converged",
+      "max_combined_mcse": 0.3340155133362517,
+      "diagnostics": {
+        "tau": [
+          28.71900454829121,
+          34.46822518926819
+        ],
+        "tau_relative_change": [
+          0.0521245380123881,
+          0.051780962205712745
+        ],
+        "ess": [
+          2924.8924648050875,
+          2437.0271326344273
+        ],
+        "mcse": [
+          0.0009900747128524317,
+          5.0614094195055375e-05
+        ],
+        "post_burn_in_steps": 7000,
+        "minimum_ess": 400,
+        "tau_multiple": 50,
+        "mcse_definition": "approximate mean MCSE; periodic axes use max of sine/cosine MCSE",
+        "acceptance_fraction": [
+          0.72025,
+          0.703875,
+          0.730875,
+          0.719,
+          0.716375,
+          0.706375,
+          0.71725,
+          0.717125,
+          0.72325,
+          0.71675,
+          0.725625,
+          0.712875
+        ],
+        "runtime_s": 4.105679666994547
+      }
+    },
+    {
+      "case": "b02",
+      "sampler": "emcee",
+      "status": "converged",
+      "max_combined_mcse": 1.256305408056316,
+      "diagnostics": {
+        "tau": [
+          31.797645123827756,
+          34.89611277085177
+        ],
+        "tau_relative_change": [
+          0.05859598523067736,
+          0.1024759659779887
+        ],
+        "ess": [
+          2641.705059380454,
+          2407.144903261661
+        ],
+        "mcse": [
+          0.0011374653800252513,
+          3.833619040345401e-05
+        ],
+        "post_burn_in_steps": 7000,
+        "minimum_ess": 400,
+        "tau_multiple": 50,
+        "mcse_definition": "approximate mean MCSE; periodic axes use max of sine/cosine MCSE",
+        "acceptance_fraction": [
+          0.712125,
+          0.713125,
+          0.71775,
+          0.708125,
+          0.72475,
+          0.72275,
+          0.718125,
+          0.711,
+          0.713375,
+          0.71325,
+          0.70525,
+          0.712125
+        ],
+        "runtime_s": 3.9961567080026725
+      }
+    },
+    {
+      "case": "b03",
+      "sampler": "emcee",
+      "status": "converged",
+      "max_combined_mcse": 1.203036815999715,
+      "diagnostics": {
+        "tau": [
+          37.60062568440846,
+          37.506458917423366,
+          42.314788292768164
+        ],
+        "tau_relative_change": [
+          0.05829325217715483,
+          0.04648633394321942,
+          0.11633968918995467
+        ],
+        "ess": [
+          2234.0053781294278,
+          2239.6142537726582,
+          1985.121594342375
+        ],
+        "mcse": [
+          0.0009581887804917425,
+          0.0018228853341424817,
+          2.9351681311077065e-05
+        ],
+        "post_burn_in_steps": 7000,
+        "minimum_ess": 400,
+        "tau_multiple": 50,
+        "mcse_definition": "approximate mean MCSE; periodic axes use max of sine/cosine MCSE",
+        "acceptance_fraction": [
+          0.630375,
+          0.656375,
+          0.65075,
+          0.64475,
+          0.638375,
+          0.6455,
+          0.654,
+          0.646125,
+          0.652875,
+          0.657,
+          0.644625,
+          0.64825
+        ],
+        "runtime_s": 7.481207292003091
+      }
+    },
+    {
+      "case": "b03",
+      "sampler": "nautilus",
+      "status": "converged",
+      "max_combined_mcse": 1.8716364725341461,
+      "diagnostics": {
+        "weighted_ess": 1835.7349029097463,
+        "mcse": [
+          0.0010697879413017898,
+          0.0020274941399176997,
+          3.082952879863347e-05
+        ],
+        "n_likelihood_calls": 6300,
+        "minimum_ess": 1800,
+        "exploration_discarded": true,
+        "mcse_definition": "Kish weighted mean approximation; periodic axes use sine/cosine",
+        "runtime_s": 18.048231667002256
+      }
+    }
+  ],
+  "radius_sbc": {
+    "id": "b06",
+    "n": 1,
+    "re_prior": [
+      0.8,
+      1.7
+    ],
+    "grid_points": 361,
+    "sigma": 0.012,
+    "cdf_refinement_max": 0.003,
+    "spot_checks": 8,
+    "max_cdf_difference": 5.719967190276343e-05,
+    "passes_grid_refinement": true
+  },
+  "conditional_rejection_fallbacks": [
+    [
+      "b04",
+      "fixed_truth",
+      81
+    ],
+    [
+      "b04",
+      "fixed_truth",
+      109
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      0
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      5
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      9
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      13
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      14
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      18
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      22
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      23
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      26
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      33
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      40
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      41
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      47
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      65
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      75
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      79
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      82
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      86
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      87
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      88
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      90
+    ],
+    [
+      "b05",
+      "fixed_truth",
+      96
+    ]
+  ],
+  "estimated_kernels": [
+    {
+      "realization": 0,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9625419617299366,
+        "host.flux": 0.9778772384478281,
+        "sky.level": 1.0052398065879626
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 0,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9686301152233779,
+        "host.flux": 0.993768937406837,
+        "sky.level": 1.060287305864911
+      },
+      "spectrum": {
+        "raw_min": 0.5109706445797008,
+        "raw_max": 1.6418416537949634,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    },
+    {
+      "realization": 1,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9837583969505391,
+        "host.flux": 0.9827111562573252,
+        "sky.level": 0.9789202225393757
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 1,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9867742156362215,
+        "host.flux": 0.9907835736730493,
+        "sky.level": 1.008390203507613
+      },
+      "spectrum": {
+        "raw_min": 0.5295589991255295,
+        "raw_max": 1.4363115632362478,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    },
+    {
+      "realization": 2,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9914278253470463,
+        "host.flux": 0.9940658003164162,
+        "sky.level": 1.0014762560206725
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 2,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9952395417740053,
+        "host.flux": 1.0062194379403337,
+        "sky.level": 1.0603950700874911
+      },
+      "spectrum": {
+        "raw_min": 0.5549123633042021,
+        "raw_max": 1.6655203850454978,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    },
+    {
+      "realization": 3,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9919633075590714,
+        "host.flux": 0.9932261701103307,
+        "sky.level": 0.9982468304810029
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 3,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.997834651072608,
+        "host.flux": 1.007916224040838,
+        "sky.level": 1.0489606547621517
+      },
+      "spectrum": {
+        "raw_min": 0.607048204441111,
+        "raw_max": 1.591706210739621,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    },
+    {
+      "realization": 4,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 1.0244506503078235,
+        "host.flux": 1.0183389436760775,
+        "sky.level": 1.0084375449268466
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 4,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 1.0298152461504113,
+        "host.flux": 1.0317874318562053,
+        "sky.level": 1.0552069703258116
+      },
+      "spectrum": {
+        "raw_min": 0.37383183297985884,
+        "raw_max": 1.5946642215623779,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    },
+    {
+      "realization": 5,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 1.0201197602423921,
+        "host.flux": 1.0148607042789746,
+        "sky.level": 1.0066956241843439
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 5,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 1.0249628022395179,
+        "host.flux": 1.0271006088084944,
+        "sky.level": 1.046655963010375
+      },
+      "spectrum": {
+        "raw_min": 0.523626244694928,
+        "raw_max": 1.5775784729519307,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    },
+    {
+      "realization": 6,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 1.015419657910053,
+        "host.flux": 0.9963706696933986,
+        "sky.level": 0.9652965385599778
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 6,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 1.0191594920039444,
+        "host.flux": 1.003607211842523,
+        "sky.level": 0.9755553311203675
+      },
+      "spectrum": {
+        "raw_min": 0.427084941147992,
+        "raw_max": 1.369848812271505,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    },
+    {
+      "realization": 7,
+      "backend": "dense",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9863727531377937,
+        "host.flux": 1.005515797920367,
+        "sky.level": 1.0370377457280073
+      },
+      "spectrum": null
+    },
+    {
+      "realization": 7,
+      "backend": "fft_periodic",
+      "status": "accepted",
+      "ratios": {
+        "point.flux": 0.9932392942013091,
+        "host.flux": 1.0247263137672624,
+        "sky.level": 1.113166946259122
+      },
+      "spectrum": {
+        "raw_min": 0.48045175595238027,
+        "raw_max": 1.8526573296803348,
+        "floor": null,
+        "clipped_fraction": 0.0
+      }
+    }
+  ],
+  "posterior_predictive": {
+    "seed": 7713232490433643575,
+    "draws": 256,
+    "case": "b03",
+    "discrepancies": {
+      "whitened_q": {
+        "observed_median": 59.90485063220903,
+        "replicated_q05_q95": [
+          40.99998898140219,
+          74.95698149193001
+        ],
+        "paired_tail_fraction": 0.34765625
+      },
+      "standardized_horizontal_lag1": {
+        "observed_median": 0.10811744726014852,
+        "replicated_q05_q95": [
+          -0.11300353971916814,
+          0.3241603798480022
+        ],
+        "paired_tail_fraction": 0.5
+      },
+      "standardized_vertical_lag1": {
+        "observed_median": 0.12421868334380254,
+        "replicated_q05_q95": [
+          -0.1375367403047747,
+          0.3164037307602401
+        ],
+        "paired_tail_fraction": 0.44140625
+      },
+      "radial_mean_0_1": {
+        "observed_median": -0.07446518762988123,
+        "replicated_q05_q95": [
+          -1.0300817408411937,
+          0.9600675410384679
+        ],
+        "paired_tail_fraction": 0.51171875
+      },
+      "radial_mean_1_2": {
+        "observed_median": 0.24030019064087565,
+        "replicated_q05_q95": [
+          -0.5967174022010413,
+          0.5628257416875244
+        ],
+        "paired_tail_fraction": 0.32421875
+      },
+      "radial_mean_2_3": {
+        "observed_median": -0.3595269541914976,
+        "replicated_q05_q95": [
+          -0.41855123082202295,
+          0.439044897927857
+        ],
+        "paired_tail_fraction": 0.87109375
+      },
+      "radial_mean_3_6": {
+        "observed_median": 0.13345179236087706,
+        "replicated_q05_q95": [
+          -0.3626800940896895,
+          0.34777483459100267
+        ],
+        "paired_tail_fraction": 0.30078125
+      }
+    }
+  },
+  "failed_realizations": [],
+  "wall_s": 61.89178254099534,
+  "peak_memory_mb": 245.17578125
+}

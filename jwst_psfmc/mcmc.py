@@ -41,8 +41,10 @@ import numpy as np
 import emcee
 from astropy.stats import sigma_clipped_stats
 
-from .psf import psf_model, prepare_psf_for_oversamp
+from .psf import _psf_fft, _psf_model_from_fft, prepare_psf_for_oversamp
 from .covariance import prepare_covariance_terms
+from .noise import _legacy_log_likelihood_from_residual
+from .parameters import _finite, spawn_seed_streams
 
 
 # ---------------------------------------------------------------------------
@@ -144,11 +146,19 @@ def log_likelihood_cov_prepared(
     log_like : float
         Log-likelihood value.
     """
+    return _log_likelihood_with_fft(
+        param, prepared, _psf_fft(psf_os), oversamp, native_shape, psf_prepare_fraction
+    )
+
+
+def _log_likelihood_with_fft(
+    param, prepared, psf_ft, oversamp, native_shape, psf_prepare_fraction
+):
     bkg = float(param[3])
     model = (
-        psf_model(
+        _psf_model_from_fft(
             param[:3],
-            psf_os,
+            psf_ft,
             oversamp,
             output_shape=prepared["shape"],
             native_shape=native_shape,
@@ -159,14 +169,7 @@ def log_likelihood_cov_prepared(
 
     model_use = np.where(prepared["valid"], model, 0.0)
     resid = prepared["data"] - model_use
-    r_norm = (resid / prepared["err"]) * np.sqrt(prepared["fit_weight"])
-
-    r_norm_fft = np.fft.fft2(r_norm)
-    chi2 = (
-        np.sum(np.abs(r_norm_fft) ** 2 / prepared["power_spectrum"])
-        / r_norm.size
-    )
-    return -0.5 * chi2
+    return _legacy_log_likelihood_from_residual(resid, prepared)
 
 
 def log_prob_prepared(
@@ -179,8 +182,6 @@ def log_prob_prepared(
     psf_prepare_fraction: float = 1.0,
 ) -> float:
     """Log-posterior = log-prior + log-likelihood (covariance-aware).
-
-    This is the function passed directly to :class:`emcee.EnsembleSampler`.
 
     Parameters
     ----------
@@ -218,9 +219,44 @@ def log_prob_prepared(
     )
 
 
+def _log_prob_with_fft(
+    param, prepared, psf_ft, oversamp, prior_bounds, native_shape, psf_prepare_fraction
+):
+    if not np.isfinite(log_prior(param, prior_bounds=prior_bounds)):
+        return -np.inf
+    return _log_likelihood_with_fft(
+        param, prepared, psf_ft, oversamp, native_shape, psf_prepare_fraction
+    )
+
+
 # ---------------------------------------------------------------------------
 # High-level preparation and run functions
 # ---------------------------------------------------------------------------
+
+def _initial_walkers(center, scales, bounds, nwalkers, rng):
+    lo, hi = np.asarray(bounds, dtype=float).T
+    widths = hi - lo
+    if not np.all(np.isfinite(widths) & (widths > 0)):
+        raise ValueError("prior bounds must be finite and strictly increasing with finite widths")
+    center = np.where((lo < center) & (center < hi), center, lo + widths / 2)
+    scales = np.minimum(scales, widths / 4)
+    if not np.all(scales > 0):
+        raise ValueError("prior bounds are too narrow to initialize walkers")
+
+    accepted = []
+    remaining = nwalkers
+    for _ in range(128):
+        proposals = center + scales * rng.standard_normal((nwalkers, len(center)))
+        inside = proposals[np.all((lo < proposals) & (proposals < hi), axis=1)][:remaining]
+        accepted.append(inside)
+        remaining -= len(inside)
+        if not remaining:
+            positions = np.concatenate(accepted)
+            if nwalkers < 2 * len(center) or emcee.ensemble.walkers_independent(positions):
+                return positions
+            break
+    raise ValueError("could not initialize a full-rank ensemble strictly inside the prior")
+
 
 def prepare_for_fitting(
     data: np.ndarray,
@@ -237,6 +273,9 @@ def prepare_for_fitting(
     pos_prior_half_width: float = 1.0,
     bkg_prior_half_width: float = 0.1,
     fit_weight: np.ndarray | None = None,
+    *,
+    flux_prior_bounds: tuple[float, float] | None = None,
+    seed: int | None = None,
 ) -> dict:
     """Prepare all inputs needed to call :func:`run_mcmc`.
 
@@ -278,13 +317,13 @@ def prepare_for_fitting(
         it equal to the stamp shape only when the source is known to be
         well centred.
     nwalkers : int, optional
-        Number of ``emcee`` walkers. Must be even and ≥ 2 × ndim (= 8).
+        Number of starting positions. For emcee use at least 2 × ndim (= 8).
         Default ``48``.
     flux_prior_scale : float, optional
         Scales the **upper** flux prior bound, which is
         ``flux_prior_scale × max(MAX, 0.1)`` where ``MAX`` is the peak pixel
-        of *data*. The lower bound is set separately by *flux_prior_min*., where
-        *MAX* is the peak pixel value of the stamp. Default ``30``.
+        among the pixels used in the fit. The lower bound is set separately
+        by *flux_prior_min*. Default ``30``.
     flux_prior_min : float, optional
         Lower bound of the uniform flux prior, in image flux units. Default
         ``-3.0``.
@@ -305,13 +344,24 @@ def prepare_for_fitting(
     fit_weight : ndarray or None, optional
         Optional pixel weight map; forwarded to
         :func:`~jwst_psfmc.covariance.prepare_covariance_terms`.
+    flux_prior_bounds : (float, float) or None, optional
+        Explicit finite, increasing bounds in image flux units. When supplied,
+        these take precedence over *flux_prior_scale* and *flux_prior_min*.
+    seed : int or None, optional
+        Root seed for reproducible walker initialization. Pass *seed* to
+        :func:`run_mcmc` as well to seed the sampler. The same root seed
+        uses distinct random streams for initialization and emcee.
 
     Returns
     -------
     fit_args : dict
-        All keyword arguments accepted by :func:`run_mcmc`, plus an extra
-        ``'pos'`` key with the initial walker positions of shape
-        ``(nwalkers, 4)``.
+        Keyword arguments for :func:`run_mcmc`, including initial walker
+        positions of shape ``(nwalkers, 4)``.
+
+    Raises
+    ------
+    ValueError
+        If the input arrays or bounds are invalid, or walker initialization fails.
     """
     psf_os_crop, out_native_shape, psf_prepare_fraction = prepare_psf_for_oversamp(
         psf_os, oversamp, native_shape=native_shape, return_fraction=True
@@ -319,29 +369,36 @@ def prepare_for_fitting(
 
     prepared = prepare_covariance_terms(data, err, cov_kernel, fit_weight=fit_weight)
 
-    MAX = float(np.nanmax(data))
-    _, _, std = sigma_clipped_stats(data, sigma=3.0, maxiters=10)
-    RMS = float(max(2.0 * max(MAX, 0.0), std, 0.2))
-    if MAX <= 0:
-        MAX = 0.1
-        RMS = 0.2
+    if isinstance(nwalkers, (bool, np.bool_)) or not isinstance(nwalkers, Integral) or nwalkers < 1:
+        raise ValueError("nwalkers must be a positive integer")
+
+    observed = prepared["data"][prepared["valid"]]
+    peak = float(observed.max())
+    _, _, std = sigma_clipped_stats(observed, sigma=3.0, maxiters=10)
+    scatter = float(max(2.0 * peak, std, 0.2))
+    if peak <= 0:
+        peak, scatter = 0.1, 0.2
+    if flux_prior_bounds is None:
+        flux_bounds = (flux_prior_min, flux_prior_scale * max(peak, 0.1))
+    else:
+        try:
+            low, high = flux_prior_bounds
+            flux_bounds = (_finite(low, "lower flux bound"), _finite(high, "upper flux bound"))
+        except (TypeError, ValueError) as exc:
+            raise ValueError("flux_prior_bounds must contain two real bounds") from exc
 
     prior_bounds = {
-        "flux": (flux_prior_min, flux_prior_scale * max(MAX, 0.1)),
+        "flux": flux_bounds,
         "dx": (dx_init - pos_prior_half_width, dx_init + pos_prior_half_width),
         "dy": (dy_init - pos_prior_half_width, dy_init + pos_prior_half_width),
         "bkg": (-bkg_prior_half_width, bkg_prior_half_width),
     }
 
-    initial = np.array([max(10.0 * MAX, 0.1), dx_init, dy_init, 0.0])
-    perturbation = np.array([RMS, 0.1, 0.1, 0.01])
+    initial = np.array([max(10.0 * peak, 0.1), dx_init, dy_init, 0.0])
+    perturbation = np.array([scatter, 0.1, 0.1, 0.01])
 
-    rng = np.random.default_rng()
-    pos = initial + perturbation * rng.standard_normal((nwalkers, 4))
-    pos[:, 0] = np.clip(pos[:, 0], prior_bounds["flux"][0] + 0.1, prior_bounds["flux"][1] - 0.1)
-    pos[:, 1] = np.clip(pos[:, 1], prior_bounds["dx"][0] + 0.01, prior_bounds["dx"][1] - 0.01)
-    pos[:, 2] = np.clip(pos[:, 2], prior_bounds["dy"][0] + 0.01, prior_bounds["dy"][1] - 0.01)
-    pos[:, 3] = np.clip(pos[:, 3], prior_bounds["bkg"][0] + 0.01, prior_bounds["bkg"][1] - 0.01)
+    rng = np.random.default_rng(None if seed is None else spawn_seed_streams(seed)["initialization"])
+    pos = _initial_walkers(initial, perturbation, list(prior_bounds.values()), nwalkers, rng)
 
     return {
         "prepared": prepared,
@@ -408,7 +465,8 @@ def run_mcmc(
     n_eff : int or None, optional
         Nautilus target effective sample size. ``None`` uses 10,000.
     seed : int or None, optional
-        Random seed for Nautilus.
+        Random seed for the sampler. For a fully reproducible emcee run,
+        also pass a seed to :func:`prepare_for_fitting`.
 
     Returns
     -------
@@ -428,26 +486,22 @@ def run_mcmc(
 
     Notes
     -----
-    For emcee, the acceptance fraction should be between ~0.2 and ~0.5.
-    If it is consistently below 0.1 the sampler is stuck rather than
-    under-run - increasing *nsteps* will not change it. The usual cause is
-    walkers pinned against a prior wall, so check ``prior_bounds`` and the
-    initial positions.
-    After the run, check convergence with
+    Check the acceptance fraction, prior bounds, and walker traces.
+    After discarding burn-in, estimate the autocorrelation time with
     ``sampler.get_autocorr_time(quiet=True)``; aim for
     ``nsteps / tau > 50``.
     """
     if sampler == "nautilus":
         bounds = _resolve_prior_bounds(prior_bounds)
         likelihood_kwargs = dict(
-            prepared=prepared, psf_os=psf_os, oversamp=oversamp,
+            prepared=prepared, psf_ft=_psf_fft(psf_os), oversamp=oversamp,
             native_shape=native_shape, psf_prepare_fraction=psf_prepare_fraction,
         )
         return _run_nautilus(bounds, likelihood_kwargs, ncores, progress, n_live, n_eff, seed)
     if sampler != "emcee":
         raise ValueError("sampler must be 'emcee' or 'nautilus'")
-    if n_live is not None or n_eff is not None or seed is not None:
-        raise ValueError("n_live, n_eff and seed are Nautilus options")
+    if n_live is not None or n_eff is not None:
+        raise ValueError("n_live and n_eff are Nautilus options")
 
     ndim = len(_PARAMETER_LABELS)
     if ncores is None:
@@ -457,7 +511,7 @@ def run_mcmc(
     sampler_kwargs = dict(
         args=(
             prepared,
-            psf_os,
+            _psf_fft(psf_os),
             oversamp,
             prior_bounds,
             native_shape,
@@ -465,16 +519,17 @@ def run_mcmc(
         )
     )
 
-    if ncores > 1:
-        with mp.Pool(processes=ncores) as pool:
-            ensemble = emcee.EnsembleSampler(
-                nwalkers, ndim, log_prob_prepared, pool=pool, **sampler_kwargs
-            )
-            ensemble.run_mcmc(pos, nsteps, progress=progress)
-    else:
+    random_state = None
+    if seed is not None:
+        sampler_seed = spawn_seed_streams(seed)["sampler"].generate_state(4)
+        random_state = np.random.RandomState(sampler_seed).get_state()
+    pool_context = mp.Pool(processes=ncores) if ncores > 1 else nullcontext()
+    with pool_context as pool:
         ensemble = emcee.EnsembleSampler(
-            nwalkers, ndim, log_prob_prepared, **sampler_kwargs
+            nwalkers, ndim, _log_prob_with_fft, pool=pool, **sampler_kwargs
         )
+        if random_state is not None:
+            ensemble.random_state = random_state
         ensemble.run_mcmc(pos, nsteps, progress=progress)
 
     return ensemble
@@ -511,7 +566,7 @@ def _run_nautilus(bounds, likelihood_kwargs, ncores, progress, n_live, n_eff, se
     pool_context = nullcontext() if ncores is None or ncores == 1 else mp.Pool(int(ncores))
     with pool_context as pool:
         nested = Sampler(
-            prior, log_likelihood_cov_prepared, likelihood_kwargs=likelihood_kwargs,
+            prior, _log_likelihood_with_fft, likelihood_kwargs=likelihood_kwargs,
             pass_dict=False, pool=pool, seed=seed, **live_options,
         )
         if not nested.run(
@@ -710,11 +765,12 @@ def summarize_flux_from_chain(
     total_flux = flat[:, 0]
     stamp_flux = np.empty_like(total_flux)
     total_fraction = np.empty_like(total_flux)
+    psf_ft = _psf_fft(psf_os)
 
     for i, param in enumerate(flat):
-        m, meta = psf_model(
+        m, meta = _psf_model_from_fft(
             param[:3],
-            psf_os,
+            psf_ft,
             oversamp=oversamp,
             native_shape=native_shape,
             output_shape=output_shape,

@@ -310,3 +310,49 @@ def plot_corner(
         fig.suptitle(title, y=1.01)
     axes = np.array(fig.axes)
     return fig, axes
+
+
+def _snapshot_panels(snapshot, panels):
+    fig, axes = plt.subplots(1, len(panels), figsize=(3.3 * len(panels), 3.5),
+                             squeeze=False, constrained_layout=True)
+    for axis, (title, image, limits, cmap) in zip(axes[0], panels):
+        artist = axis.imshow(image, origin="lower", cmap=cmap, vmin=limits[0], vmax=limits[1])
+        axis.set(title=title, xlabel="x (pixel)", ylabel="y (pixel)")
+        fig.colorbar(artist, ax=axis, shrink=.75)
+    fig.suptitle(f"{snapshot['label']}  |  {snapshot['data_unit']}")
+    return fig, axes[0]
+
+
+def plot_model_fit(snapshot):
+    """Plot snapshot data, total model and data-minus-model residual."""
+    low, high = np.nanpercentile(snapshot["data"], (1, 99))
+    limit = max(float(np.nanpercentile(np.abs(snapshot["residual"]), 99)), 1e-15)
+    return _snapshot_panels(snapshot, [
+        ("Data", snapshot["data"], (low, high), "viridis"),
+        ("Total model", snapshot["image"], (low, high), "viridis"),
+        ("Residual", snapshot["residual"], (-limit, limit), "RdBu_r"),
+    ])
+
+
+def plot_decomposition(snapshot):
+    """Plot the rendered components on a common scale from one sample."""
+    images = snapshot["components"]
+    values = np.stack(list(images.values()))
+    limit = max(float(np.max(np.abs(values))), 1e-15)
+    return _snapshot_panels(snapshot, [(name, img, (-limit, limit), "RdBu_r")
+                                       for name, img in images.items()])
+
+
+def plot_residual_diagnostics(snapshot):
+    """Show residual/ERR as an image and whitened values as a vector."""
+    fig, axes = plt.subplots(1, 2, figsize=(8, 3.5), constrained_layout=True)
+    standardized = snapshot["standardized_residual"]
+    limit = max(float(np.nanpercentile(np.abs(standardized), 99)), 1e-15)
+    artist = axes[0].imshow(standardized, origin="lower", cmap="RdBu_r", vmin=-limit, vmax=limit)
+    fig.colorbar(artist, ax=axes[0], shrink=.75)
+    axes[0].set(title="Standardized residual", xlabel="x (pixel)", ylabel="y (pixel)")
+    axes[1].plot(snapshot["whitened_residual"], ".", markersize=3)
+    axes[1].axhline(0, color="0.4", linewidth=.8)
+    axes[1].set(title="Whitened residual", xlabel="Operator output index", ylabel="Amplitude")
+    fig.suptitle(snapshot["label"])
+    return fig, axes

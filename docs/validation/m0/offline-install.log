@@ -1,0 +1,14 @@
+WARNING: The directory '/Users/mingyang/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Obtaining file:///Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: jwst-psfmc
+  Building editable for jwst-psfmc (pyproject.toml): started
+  Building editable for jwst-psfmc (pyproject.toml): finished with status 'done'
+  Created wheel for jwst-psfmc: filename=jwst_psfmc-0.3.0-0.editable-py3-none-any.whl size=10673 sha256=7a09fd5e2162f5d39d4cd54baf0300993e3b41f7a3ed4018f8548837a17c7adf
+  Stored in directory: /private/var/folders/_6/cnd9f3s52h37wrw4_8q_4b380000gn/T/pip-ephem-wheel-cache-a4lvgt2b/wheels/72/00/3e/3e68719a058f2932f98ed4024416098df7b8434515632ede44
+Successfully built jwst-psfmc
+Installing collected packages: jwst-psfmc
+Successfully installed jwst-psfmc-0.3.0

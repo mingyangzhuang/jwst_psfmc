@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.11, pytest-7.4.2, pluggy-1.3.0
+rootdir: /Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc
+configfile: pyproject.toml
+testpaths: tests
+collected 114 items
+
+tests/test_covariance.py ............................................... [ 41%]
+...........                                                              [ 50%]
+tests/test_io.py .............                                           [ 62%]
+tests/test_mcmc.py .............s.......                                 [ 80%]
+tests/test_psf.py ......................                                 [100%]
+
+=============================== warnings summary ===============================
+tests/test_covariance.py::TestGetSourceMask::test_blank_sky_is_not_masked
+tests/test_covariance.py::TestGetSourceMask::test_source_free_image_returns_all_false
+tests/test_covariance.py::TestGetSourceMask::test_real_source_is_detected_and_dilated
+  /Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc/jwst_psfmc/covariance.py:150: AstropyDeprecationWarning: 'npixels' was deprecated in version 3.0 and will be removed in version 4.0. Use argument 'n_pixels' instead.
+    segm = detect_sources(image_conv, threshold, npixels=npixels)
+
+tests/test_covariance.py::TestGetSourceMask::test_blank_sky_is_not_masked
+tests/test_covariance.py::TestGetSourceMask::test_source_free_image_returns_all_false
+  /Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc/.venv-sersic/lib/python3.12/site-packages/photutils/segmentation/detect.py:394: NoDetectionsWarning: No sources were found. Try lowering the threshold or pixels parameters.
+    warnings.warn(msg, NoDetectionsWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /Users/mingyang/python/UIUC/JWST/NEXUS_transients/jwst_psfmc/docs/validation/m0/original-suite.xml -
+================= 113 passed, 1 skipped, 5 warnings in 24.51s ==================

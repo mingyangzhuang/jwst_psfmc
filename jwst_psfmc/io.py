@@ -15,9 +15,143 @@ repository — see the README for download instructions.
 from __future__ import annotations
 
 from pathlib import Path
+import json
+import os
+from tempfile import NamedTemporaryFile
 
 import numpy as np
 import emcee
+
+from .inference import FitResult
+
+
+_MODEL_SCHEMA_VERSION = 1
+_MODEL_ARRAYS = ("sampling_samples", "physical_samples", "log_likelihood", "log_prior")
+
+
+def _model_archive_checks(result):
+    if result.sampler not in ("emcee", "nautilus"):
+        raise ValueError("invalid model archive sampler")
+    if result.status not in ("converged", "insufficient_sampling", "numerical_failure"):
+        raise ValueError("invalid model archive status")
+    if (not result.free_names or any(not isinstance(name, str) or not name for name in result.free_names)
+            or len(set(result.free_names)) != len(result.free_names)):
+        raise ValueError("invalid model archive free_names")
+    if (not isinstance(result.metadata, dict) or not isinstance(result.diagnostics, dict)
+            or not isinstance(result.stop_reason, str)):
+        raise ValueError("invalid model archive metadata or diagnostics")
+    parameter_schema = result.metadata.get("parameters")
+    if not isinstance(parameter_schema, dict) or parameter_schema.get("free_names") != list(result.free_names):
+        raise ValueError("model archive parameter schema disagrees with free_names")
+    samples = result.sampling_samples
+    shape = samples.shape[:-1]
+    if (samples.ndim != (3 if result.sampler == "emcee" else 2)
+            or samples.shape[-1] != len(result.free_names)
+            or result.physical_samples.shape != samples.shape
+            or result.log_likelihood.shape != shape or result.log_prior.shape != shape):
+        raise ValueError("inconsistent model archive sample or log array shapes")
+    if (not isinstance(result.burn_in, int) or result.burn_in < 0
+            or (shape[0] and result.burn_in >= shape[0])
+            or (result.sampler == "nautilus" and result.burn_in != 0)):
+        raise ValueError("invalid model archive burn-in")
+    for name in _MODEL_ARRAYS:
+        values = getattr(result, name)
+        if values.dtype.kind not in "iuf" or not np.all(np.isfinite(values)):
+            raise ValueError(f"invalid model archive array: {name}")
+    if result.status == "converged" and not samples.size:
+        raise ValueError("converged model archive has no posterior samples")
+    if result.sampler == "emcee" and result.log_weights is not None:
+        raise ValueError("emcee model archives do not use posterior weights")
+    if result.sampler == "nautilus":
+        weights = result.log_weights
+        if (weights is None or weights.shape != shape or weights.dtype.kind not in "iuf"
+                or not np.all(np.isfinite(weights)) or
+                (weights.size and not np.isclose(np.exp(weights).sum(), 1.))):
+            raise ValueError("invalid model archive weights")
+
+
+def _json_scalar(value):
+    if isinstance(value, np.generic):
+        return value.item()
+    raise TypeError(f"{type(value).__name__} is not JSON serializable")
+
+
+def save_model_results(path: str | Path, result: FitResult) -> None:
+    """Atomically save a versioned model posterior and UTF-8 metadata.
+
+    Parameters
+    ----------
+    path : str or Path
+        Destination. The .npz suffix is appended if absent.
+    result : FitResult
+        Posterior or diagnostic failure result from the generic fitting API.
+
+    Raises
+    ------
+    ValueError
+        If the result arrays or metadata are inconsistent.
+    OSError
+        If the destination cannot be written.
+    """
+    _model_archive_checks(result)
+    path = Path(path)
+    if path.suffix != ".npz":
+        path = path.with_name(path.name + ".npz")
+    header = {name: getattr(result, name) for name in (
+        "sampler", "status", "stop_reason", "free_names", "burn_in", "diagnostics", "metadata",
+    )}
+    header["schema_version"] = _MODEL_SCHEMA_VERSION
+    arrays = {name: getattr(result, name) for name in _MODEL_ARRAYS}
+    if result.log_weights is not None:
+        arrays["log_weights"] = result.log_weights
+    arrays["metadata_json"] = np.asarray(
+        json.dumps(header, ensure_ascii=False, allow_nan=False, default=_json_scalar)
+    )
+    with NamedTemporaryFile(dir=path.parent, suffix=".npz", delete=False) as temporary:
+        temp_path = Path(temporary.name)
+    try:
+        np.savez_compressed(temp_path, **arrays)
+        os.replace(temp_path, path)
+    finally:
+        temp_path.unlink(missing_ok=True)
+
+
+def load_model_results(path: str | Path) -> FitResult:
+    """Read a generic result archive without deserializing Python objects.
+
+    Parameters
+    ----------
+    path : str or Path
+        Model result archive, with or without the .npz extension.
+
+    Returns
+    -------
+    FitResult
+        Restored physical and sampling-space draws with schema and diagnostics.
+
+    Raises
+    ------
+    ValueError
+        If the archive is malformed or uses an unsupported schema version.
+    """
+    with np.load(_npz_path(path), allow_pickle=False) as archive:
+        if "metadata_json" not in archive:
+            raise ValueError("model archive is missing metadata")
+        raw_header = archive["metadata_json"]
+        if raw_header.shape != () or raw_header.dtype.kind != "U":
+            raise ValueError("model archive metadata must be a scalar JSON string")
+        header = json.loads(raw_header.item())
+        if not isinstance(header, dict) or header.pop("schema_version", None) != _MODEL_SCHEMA_VERSION:
+            raise ValueError("unsupported model archive schema version")
+        try:
+            header["free_names"] = tuple(header["free_names"])
+            arrays = {name: archive[name] for name in _MODEL_ARRAYS}
+            weights = archive["log_weights"] if "log_weights" in archive else None
+            result = FitResult(**header, **arrays, log_weights=weights)
+        except (TypeError, KeyError) as exc:
+            raise ValueError("malformed model archive") from exc
+    _model_archive_checks(result)
+    return result
 
 
 def save_nautilus_results(path: str | Path, result: dict) -> None:

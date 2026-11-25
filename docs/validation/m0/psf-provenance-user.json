@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-17",
+  "evidence_level": "user_report",
+  "confirmed_by": "Mingyang Zhuang",
+  "generation_method": "PSFEx fitted to stars in the corresponding mosaics",
+  "response_semantics": "effective_psf",
+  "response_scope": "Composite response of the input mosaic; individual detector/drizzle kernels are not separately identified",
+  "applies_to": [
+    "examples/PSF/example1_f200w_PSF_4_c.fits",
+    "examples/PSF/example2_f200w_PSF_4_c.fits"
+  ],
+  "typical_training_star_counts": {
+    "deep_epoch": [
+      40,
+      50
+    ],
+    "wide_epoch": [
+      100,
+      200
+    ]
+  },
+  "training_sample_note": "Nearly all bright stars used. Ranges describe usual epoch construction, not the counts in these particular example headers (29).",
+  "remaining_unverified": [
+    "PSFEx configuration/version and PSF_SAMP",
+    "reference center",
+    "normalization/aperture reference",
+    "spatial model and export position",
+    "mosaic drizzle settings"
+  ],
+  "validation_status": "response semantics reported by producer; renderer accuracy and real-star residual tests pending"
+}

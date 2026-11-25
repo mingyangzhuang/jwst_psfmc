@@ -1,4 +1,6 @@
 # Python
+.venv-sersic/
+.venv-m0-full/
 __pycache__/
 *.py[cod]
 *.pyo
@@ -20,6 +22,9 @@ jwst_psfmc-*/
 .coverage
 htmlcov/
 *.log
+!docs/validation/m0/*.log
+/docs/validation/m0/notebooks/
+/docs/validation/m0/full-run-*/notebooks/
 
 # Jupyter
 .ipynb_checkpoints/
@@ -35,3 +40,18 @@ htmlcov/
 
 # MCMC result archives written by the demo notebooks (regenerated on every run)
 examples/*.npz
+docs/validation/m8/*/*.npz
+docs/validation/m9/*.npz
+
+# Local observing data and regenerated image-level validation artifacts.
+/cutouts/
+/interesting objs/
+/blank_field_test/
+/obj_39/
+/PSF_test/
+/nexus_cal_footprint_coverage*.fits
+/docs/validation/m8/*/*.fits
+/docs/validation/m8/*/*.png
+
+# Local M10 results derived from the target observations.
+/docs/validation/m10/
