@@ -73,7 +73,8 @@ def test_single_sersic_posterior_against_independent_gls(linear_case, backend, t
         opts = {"n_live": 110, "n_eff": 1800, "n_like_max": 15000}
         initial = None
     else:
-        opts = {"nsteps": 4000, "burn_in": 500}
+        # Leave enough samples to pass the autocorrelation stability check across platforms.
+        opts = {"nsteps": 12000, "burn_in": 500}
         initial = opt
     result = run_model_mcmc(fit, sampler=backend, initial=initial, seed=44, sampling_options=opts)
     assert result.status == "converged", result.diagnostics
@@ -89,7 +90,7 @@ def test_single_sersic_posterior_against_independent_gls(linear_case, backend, t
         weights = np.exp(result.log_weights)
         index = (0,)
     else:
-        assert result.sampling_samples.shape == (4000, 12, 2)
+        assert result.sampling_samples.shape == (opts["nsteps"], 12, 2)
         samples = result.physical_samples[result.burn_in:].reshape(-1, 2)
         weights = None
         index = (0, 0)
